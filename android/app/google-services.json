@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1059387534651",
+    "project_id": "rider-star",
+    "storage_bucket": "rider-star.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059387534651:android:55c59d3eca8ceee2dfdb1e",
+        "android_client_info": {
+          "package_name": "com.example.ride_star"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059387534651-nm08aq2lrd8hsd5oo9dqpdj4r60dim3n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ride_star",
+            "certificate_hash": "29cdadbf1d5b920d6d127fd5e670d00bb8675e96"
+          }
+        },
+        {
+          "client_id": "1059387534651-75t67smvtsrtc746l09qc27d87jum6d6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCeB1yw8US3kuBML0oM6V8zDmtrL29dLM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059387534651-75t67smvtsrtc746l09qc27d87jum6d6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
