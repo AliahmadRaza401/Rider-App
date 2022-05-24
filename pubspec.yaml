@@ -55,6 +55,12 @@ dependencies:
   shared_preferences: ^2.0.13
   uuid: ^3.0.6
   country_code_picker: ^2.0.2
+  geocoding: ^2.0.4
+  location: ^4.3.0
+  permission_handler: ^8.3.0
+  polyline: ^1.0.2
+  flutter_polyline_points: ^1.0.0
+  geolocator: ^8.2.1
 
 dev_dependencies:
   flutter_test:

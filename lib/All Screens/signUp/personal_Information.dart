@@ -155,66 +155,6 @@ class _PersonalInformationState extends State<PersonalInformation> {
                   vehicleController,
                 ),
                 CustomWidget.heightSizedBoxWidget(100.h),
-                InkWell(
-                  onTap: () {
-                    if (formKey.currentState!.validate() && _image != null) {
-                      // print(file);
-                      // print(enterFullNameController.text);
-                      // print(enterMobileNumberController.text);
-                      // print(vehicleController.text);
-
-                      // print('Is Velidate');
-                      // userProfileProvider.enlistmentCertificateNumber =
-                      //     "sdfsdfsd";
-                      print(_image!.path);
-                      userProfileProvider.personalName =
-                          enterFullNameController.text;
-                      userProfileProvider.personalMobileNumber =
-                          enterMobileNumberController.text;
-                      userProfileProvider.personalVehicle =
-                          vehicleController.text;
-                      userProfileProvider.personalPicture = _image;
-                      print(userProfileProvider.personalName);
-                      print(userProfileProvider.personalMobileNumber);
-                      print(userProfileProvider.personalVehicle);
-                      Navigator.pushNamed(context, '/nationaIDCardScreen');
-                    } else {
-                      print('Is  Not Velidate');
-                    }
-                  },
-                  child: Container(
-                      height: 56.h,
-                      width: 323.w,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.sp),
-                        // color: const Color(0xffCE1A17),
-                        boxShadow: const <BoxShadow>[
-                          BoxShadow(
-                            color: Color(0xffEAC4C7),
-                            blurRadius: 15.0,
-                            offset: Offset(0.0, 0.55),
-                          ),
-                        ],
-                        color: const Color(0xffCE1A17),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Next",
-                            style: TextStyle(
-                                color: const Color(0xffFFFFFF),
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'Encode Sans'),
-                          ),
-                          const Icon(
-                            Icons.arrow_forward,
-                            color: Color(0xffFFFFFF),
-                          )
-                        ],
-                      )),
-                ),
               ],
             ),
           ),
