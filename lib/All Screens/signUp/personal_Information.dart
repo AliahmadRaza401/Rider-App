@@ -150,14 +150,6 @@ class _PersonalInformationState extends State<PersonalInformation> {
               InkWell(
                 onTap: () {
                   if (formKey.currentState!.validate() && _image != null) {
-                    // print(file);
-                    // print(enterFullNameController.text);
-                    // print(enterMobileNumberController.text);
-                    // print(vehicleController.text);
-
-                    // print('Is Velidate');
-                    // userProfileProvider.enlistmentCertificateNumber =
-                    //     "sdfsdfsd";
                     print(_image!.path);
                     userProfileProvider.personalName =
                         enterFullNameController.text;
@@ -168,7 +160,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                     print(userProfileProvider.personalName);
                     print(userProfileProvider.personalMobileNumber);
                     print(userProfileProvider.personalVehicle);
-                    // Navigator.pushNamed(context, '/nationaIDCardScreen');
+                    Navigator.pushNamed(context, '/nationaIDCardScreen');
                   } else {
                     print('Is  Not Velidate');
                   }

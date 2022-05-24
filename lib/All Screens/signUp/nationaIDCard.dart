@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ride_star/Images/images.dart';
 
@@ -16,6 +17,22 @@ class NationaIDCardScreen extends StatefulWidget {
 }
 
 class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
+
+   File? _image;
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
   final formKey = GlobalKey<FormState>();
   PlatformFile? card1;
   PlatformFile? card2;

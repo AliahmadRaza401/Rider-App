@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:ride_star/Custom%20Widgets/customWidgets.dart';
 
 import '../../Images/images.dart';
+import '../ConstFile.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -15,10 +17,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  var driverCurrentLoaction;
   GoogleMapController? myController;
 
   final LatLng _center = const LatLng(45.521563, -122.677433);
-
 
   Completer<GoogleMapController> _controller = Completer();
   double lat = 30.029585;
@@ -35,7 +37,8 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(50, 50)),
+    BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(size: Size(50, 50)),
             'assets/images/marker_car.png')
         .then((icon) {
       customIcon = icon;
@@ -82,7 +85,7 @@ class _HomeState extends State<Home> {
                 color: Colors.black,
               ),
               child: GoogleMap(
-                mapType:MapType.terrain,
+                mapType: MapType.terrain,
                 rotateGesturesEnabled: true,
                 zoomGesturesEnabled: true,
                 trafficEnabled: false,
@@ -114,8 +117,48 @@ class _HomeState extends State<Home> {
               // ),
             ),
             CustomWidget.heightSizedBoxWidget(21.h),
-            textFormField('Driver’s current loaction', location, true,
-                0xff606060, 12.sp, FontWeight.w400, 0xffAEAEB2),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PlacePicker(
+                          apiKey: mapKey,
+                          hintText: "Find a place ...",
+                          searchingText: "Please wait ...",
+                          selectText: "Select place",
+                          outsideOfPickAreaText: "Place not in area",
+                          initialPosition: initialLatLng,
+                          useCurrentLocation: true,
+                          selectInitialPosition: true,
+                          usePinPointingSearch: true,
+                          usePlaceDetailSearch: true,
+                          onPlacePicked: (result) {
+                            driverCurrentLoaction = result;
+                            Navigator.of(context).pop();
+                            setState(() {
+                              print(driverCurrentLoaction);
+                            });
+                            // setState(() {
+                            //   deliveryProvider.pickAddress.text =
+                            //       selectedPlace2!.formattedAddress
+                            //           .toString();
+                            //   deliveryProvider.pickupLat =
+                            //       selectedPlace2!
+                            //           .geometry!.location.lat
+                            //           .toString();
+                            //   deliveryProvider.pickupLong =
+                            //       selectedPlace2!
+                            //           .geometry!.location.lng
+                            //           .toString();
+                            // });
+                          })),
+                );
+              },
+              child: Text('Driver’s current loaction')
+              // textFormField('Driver’s current loaction', location, true,
+              //     0xff606060, 12.sp, FontWeight.w400, 0xffAEAEB2),
+            ),
             CustomWidget.heightSizedBoxWidget(21.h),
             textFormField('Destination', location, true, 0xff606060, 12.sp,
                 FontWeight.w400, 0xffAEAEB2),

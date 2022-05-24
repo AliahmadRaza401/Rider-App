@@ -10,12 +10,12 @@ import 'Provider/allProvider.dart';
 import 'Provider/authenticationProvider.dart';
 import 'Routes/routes.dart';
 
-Future<void>  main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
     MultiProvider(
-      providers:allProvider,
+      providers: allProvider,
       child: const HomePage(),
     ),
   );
@@ -48,10 +48,8 @@ class HomePage extends StatelessWidget {
               child: widget!,
             );
           },
-          home: const PersonalInformation(),
-          // home: const AdminSideMenu(),
-          // home: const Home(),
-
+          home: const Home(),
+          // home: const PersonalInformation(),
           // home: const SplashScreen(),
         );
       },
