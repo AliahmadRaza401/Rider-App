@@ -25,7 +25,7 @@ class _EnterMobileNumberState extends State<EnterMobileNumber> {
   bool loading = false;
   TextEditingController phone = TextEditingController();
   signIn() async {
-    print("SingIn");
+    print("SingIn_______________________");
     if (phone.text == null || phone.text.isEmpty) {
       ToastUtils.showCustomToast(context, "Enter Your Number", Colors.red);
     } else {
