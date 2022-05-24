@@ -173,6 +173,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           enterMobileNumberController.text;
                       userProfileProvider.personalVehicle =
                           vehicleController.text;
+                      userProfileProvider.personalPicture = _image;
                       print(userProfileProvider.personalName);
                       print(userProfileProvider.personalMobileNumber);
                       print(userProfileProvider.personalVehicle);

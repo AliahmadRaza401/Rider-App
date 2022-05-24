@@ -2,67 +2,97 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ride_star/Routes/routes.dart';
 import 'package:ride_star/Services/firebase_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import '../Utils/custom_toast.dart';
 
 class UserProfileProvider with ChangeNotifier {
-  String? personalPicture;
+  bool loading = false;
+
+  var personalPicture;
   String? personalName;
   String? personalMobileNumber;
   String? personalVehicle;
-  String? nidFrontImg;
-  String? nidBackImg;
+  var nidFrontImg;
+  var nidBackImg;
   String? nidCardNumber;
-  String? drivingLicenseFrontImg;
-  String? drivingLicenseBackImg;
+  var drivingLicenseFrontImg;
+  var drivingLicenseBackImg;
   String? drivingLicenseNumber;
   String? drivingLicenseExpiryDate;
-  String? enlistmentCertificateImage;
+  var enlistmentCertificateImage;
   String? enlistmentCertificateNumber;
   String? enlistmentCertificateExpiryDate;
 
+  setLoading(bool value) {
+    loading = value;
+    notifyListeners();
+  }
+
   void postDetailsToFirestore(BuildContext context) async {
-    // SharedPreferences preferences = await SharedPreferences.getInstance();
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      setLoading(true);
+      FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+      print('personalPicture: $personalPicture');
+      print('nidFrontImg: $nidFrontImg');
+      print('nidFrontImg: $nidFrontImg');
+      print('nidBackImg: $nidBackImg');
+      print('drivingLicenseFrontImg: $drivingLicenseFrontImg');
+      print('drivingLicenseBackImg: $drivingLicenseBackImg');
+      print('enlistmentCertificateImage: $enlistmentCertificateImage');
 
-    String userPic =
-        await FirebaseHelper.imageUpload(personalPicture, DateTime.now());
-    print('userPic: $userPic');
-    String nidFPic =
-        await FirebaseHelper.imageUpload(nidFrontImg, DateTime.now());
+      String userPic = await FirebaseHelper.imageUpload(
+          personalPicture, personalPicture.toString());
+      print('userPic: $userPic');
+      String nidFPic = await FirebaseHelper.imageUpload(
+          nidFrontImg, DateTime.now().toString());
 
-    String nidBPic =
-        await FirebaseHelper.imageUpload(nidBackImg, DateTime.now());
-    String driveringLicFPick = await FirebaseHelper.imageUpload(
-        drivingLicenseFrontImg, DateTime.now());
-    String driveringLicBPick =
-        await FirebaseHelper.imageUpload(drivingLicenseBackImg, DateTime.now());
-    String enlistCertiPick = await FirebaseHelper.imageUpload(
-        enlistmentCertificateImage, DateTime.now());
+      String nidBPic = await FirebaseHelper.imageUpload(
+          nidBackImg, DateTime.now().toString());
+      String driveringLicFPick = await FirebaseHelper.imageUpload(
+          drivingLicenseFrontImg, DateTime.now().toString());
+      String driveringLicBPick = await FirebaseHelper.imageUpload(
+          drivingLicenseBackImg, DateTime.now().toString());
+      String enlistCertiPick = await FirebaseHelper.imageUpload(
+          enlistmentCertificateImage, DateTime.now().toString());
+      print("Image post Done________________________________");
+      var uuid = Uuid().v1();
 
-    await firebaseFirestore.collection("users").doc().set({
-      'uid': FirebaseAuth.instance.currentUser!.uid,
-      'userPic': userPic.toString(),
-      'userName': personalName,
-      'userMobile': personalMobileNumber,
-      'vehicleType': personalVehicle,
-      'nidFPic': nidFPic,
-      'nidBPic': nidBPic,
-      'nidCardNo': nidCardNumber,
-      'driveringLicFPick': driveringLicFPick,
-      'driveringLicBPick': driveringLicBPick,
-      'driveringLicNo': drivingLicenseNumber,
-      'driveringLicExpDate': drivingLicenseExpiryDate,
-      'enlistCertiPick': enlistCertiPick,
-      'enlistCertiNo': enlistmentCertificateNumber,
-      'enlistCertiExpDate': enlistmentCertificateExpiryDate,
-      'createAt': DateTime.now(),
-    }).then((value) {
-      ToastUtils.showCustomToast(context, "SignUp Success", Colors.green);
-    }).catchError((e) {
+      await firebaseFirestore.collection("users").doc(uuid.toString()).set({
+        'uid': uuid.toString(),
+        'userPic': userPic.toString(),
+        'userName': personalName,
+        'userMobile': personalMobileNumber,
+        'vehicleType': personalVehicle,
+        'nidFPic': nidFPic,
+        'nidBPic': nidBPic,
+        'nidCardNo': nidCardNumber,
+        'driveringLicFPick': driveringLicFPick,
+        'driveringLicBPick': driveringLicBPick,
+        'driveringLicNo': drivingLicenseNumber,
+        'driveringLicExpDate': drivingLicenseExpiryDate,
+        'enlistCertiPick': enlistCertiPick,
+        'enlistCertiNo': enlistmentCertificateNumber,
+        'enlistCertiExpDate': enlistmentCertificateExpiryDate,
+        'createAt': DateTime.now(),
+      }).then((value) {
+        setLoading(false);
+        ToastUtils.showCustomToast(context, "SignUp Success", Colors.green);
+        Navigator.pushReplacementNamed(context, Routes.enterMobileNumber);
+      }).catchError((e) {
+        setLoading(false);
+        ToastUtils.showCustomToast(
+            context, "SignUp Fail! \n please try again later", Colors.red);
+      });
+    } catch (e) {
+      print('e: $e');
+      setLoading(false);
       ToastUtils.showCustomToast(
           context, "SignUp Fail! \n please try again later", Colors.red);
-    });
+    }
   }
 }

@@ -220,12 +220,10 @@ class _DrivingLicanceState extends State<DrivingLicance> {
                     _imageFrondSide != null &&
                     _imagebackSide != null &&
                     selectedDate.isNotEmpty) {
-                  userProfileProvider.drivingLicenseBackImg =
-                      _imagebackSide!.path;
+                  userProfileProvider.drivingLicenseBackImg = _imagebackSide;
                   userProfileProvider.drivingLicenseExpiryDate =
                       selectedDate.toString();
-                  userProfileProvider.drivingLicenseFrontImg =
-                      _imageFrondSide!.path;
+                  userProfileProvider.drivingLicenseFrontImg = _imageFrondSide;
 
                   userProfileProvider.drivingLicenseNumber =
                       drivingLicanceCardNumberController.text;
