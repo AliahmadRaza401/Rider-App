@@ -3,7 +3,12 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:ride_star/Provider/authenticationProvider.dart';
+import 'package:ride_star/Services/firebase_helper.dart';
+import 'package:ride_star/Services/imagPicker.dart';
 
 import '../../Custom Widgets/customWidgets.dart';
 import '../../Images/images.dart';
@@ -18,7 +23,15 @@ class EnlistmentCertificate extends StatefulWidget {
 class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
   final formKey = GlobalKey<FormState>();
   PlatformFile? card1;
-  TextEditingController enlistmentNumberController = TextEditingController();
+  // TextEditingController enlistmentNumberController = TextEditingController();
+  late UserProfileProvider userProfileProvider;
+
+  @override
+  void initState() {
+    userProfileProvider =
+        Provider.of<UserProfileProvider>(context, listen: false);
+    super.initState();
+  }
 
   DateTime? datepicker;
   DateTime selectedDate1 = DateTime.now();
@@ -95,18 +108,9 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
             CustomWidget.heightSizedBoxWidget(5.h),
             GestureDetector(
               onTap: () async {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles();
-                if (result == null) {
-                  return;
-                } else {
-                  card1 = result.files.first;
-                  setState(() {
-                    print(card1);
-                  });
-                }
+                openFilePicker();
               },
-              child: card1 != null
+              child: _image != null
                   ? Container(
                       height: 202.h,
                       width: 323.w,
@@ -115,9 +119,9 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
                         border: Border.all(color: Color(0xff888888)),
                         image: DecorationImage(
                           image: FileImage(
-                            File(card1!.path.toString()),
+                            _image!,
                           ),
-                          fit: BoxFit.contain,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     )
@@ -134,14 +138,15 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
             ),
             CustomWidget.heightSizedBoxWidget(20.h),
             textFormField(
-                'Enlistment Certificate Number',
-                nidcard,
-                true,
-                0xff606060,
-                12.sp,
-                FontWeight.w400,
-                0xffAEAEB2,
-                enlistmentNumberController),
+              'Enlistment Certificate Number',
+              nidcard,
+              true,
+              0xff606060,
+              12.sp,
+              FontWeight.w400,
+              0xffAEAEB2,
+              userProfileProvider.enlistmentCertificateNumber,
+            ),
             CustomWidget.heightSizedBoxWidget(45.h),
             InkWell(
               onTap: () {
@@ -177,14 +182,14 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
             InkWell(
               onTap: () {
                 if (formKey.currentState!.validate() &&
-                    card1 != null &&
+                    _image != null &&
                     selectedDate.isNotEmpty) {
-                  print(card1);
-                  print(selectedDate);
-                  print(enlistmentNumberController.text);
-                  print('Is Velidate');
+                  userProfileProvider.enlistmentCertificateExpiryDate =
+                      selectedDate;
+                  userProfileProvider.enlistmentCertificateImage = _image!.path;
 
-                  Navigator.pushNamed(context, '/home');
+                  userProfileProvider.postDetailsToFirestore(context);
+                  // Navigator.pushNamed(context, '/home');
                 } else {
                   print('Is  Not Velidate');
                 }
@@ -208,7 +213,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Next",
+                        "SignUp ",
                         style: TextStyle(
                             color: const Color(0xffFFFFFF),
                             fontSize: 16.sp,
@@ -227,6 +232,43 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
         ),
       )),
     );
+  }
+
+  File? _image;
+  Future<void> openFilePicker() async {
+    print("File Picker");
+    var image = await pickImageFromGalleryOrCamera(context);
+    if (image == null) return;
+
+    setState(() => _image = image);
+    // cropImage(image);
+  }
+
+  /// Crop Image
+  cropImage(filePath) async {
+    File? croppedFile = await ImageCropper().cropImage(
+        sourcePath: filePath.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
+    if (croppedFile != null) {
+      setState(() {
+        _image = croppedFile;
+      });
+    }
   }
 
   Widget textFormField(

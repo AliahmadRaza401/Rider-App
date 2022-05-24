@@ -4,10 +4,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:ride_star/Services/imagPicker.dart';
 // import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import '../../Custom Widgets/customWidgets.dart';
 import '../../Images/images.dart';
 import 'package:date_time_picker/date_time_picker.dart';
+
+import '../../Provider/authenticationProvider.dart';
 
 class DrivingLicance extends StatefulWidget {
   const DrivingLicance({Key? key}) : super(key: key);
@@ -23,6 +27,16 @@ class _DrivingLicanceState extends State<DrivingLicance> {
 
   TextEditingController drivingLicanceCardNumberController =
       TextEditingController();
+
+  UserProfileProvider userProfileProvider = UserProfileProvider();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    userProfileProvider =
+        Provider.of<UserProfileProvider>(context, listen: false);
+  }
 
   DateTime? datepicker;
   DateTime selectedDate1 = DateTime.now();
@@ -99,18 +113,9 @@ class _DrivingLicanceState extends State<DrivingLicance> {
             CustomWidget.heightSizedBoxWidget(5.h),
             GestureDetector(
               onTap: () async {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles();
-                if (result == null) {
-                  return;
-                } else {
-                  card1 = result.files.first;
-                  setState(() {
-                    print(card1);
-                  });
-                }
+                openFilePickerFront();
               },
-              child: card1 != null
+              child: _imageFrondSide != null
                   ? Container(
                       height: 202.h,
                       width: 323.w,
@@ -119,9 +124,9 @@ class _DrivingLicanceState extends State<DrivingLicance> {
                         border: Border.all(color: Color(0xff888888)),
                         image: DecorationImage(
                           image: FileImage(
-                            File(card1!.path.toString()),
+                            _imageFrondSide!,
                           ),
-                          fit: BoxFit.contain,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     )
@@ -144,18 +149,9 @@ class _DrivingLicanceState extends State<DrivingLicance> {
             CustomWidget.heightSizedBoxWidget(5.h),
             GestureDetector(
               onTap: () async {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles();
-                if (result == null) {
-                  return;
-                } else {
-                  card2 = result.files.first;
-                  setState(() {
-                    print(card2);
-                  });
-                }
+                openFilePickerBack();
               },
-              child: card2 != null
+              child: _imagebackSide != null
                   ? Container(
                       height: 202.h,
                       width: 323.w,
@@ -164,9 +160,9 @@ class _DrivingLicanceState extends State<DrivingLicance> {
                         border: Border.all(color: const Color(0xff888888)),
                         image: DecorationImage(
                           image: FileImage(
-                            File(card2!.path.toString()),
+                            _imagebackSide!,
                           ),
-                          fit: BoxFit.contain,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     )
@@ -207,11 +203,11 @@ class _DrivingLicanceState extends State<DrivingLicance> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                         selectedDate.isEmpty  
+                    selectedDate.isEmpty
                         ? CustomWidget.textWidget('Driving License Expiry Date',
                             'Encode Sans', 12.sp, FontWeight.w700, 0xff606060)
-                        : CustomWidget.textWidget(selectedDate,
-                            'Encode Sans', 12.sp, FontWeight.w700, 0xff606060),
+                        : CustomWidget.textWidget(selectedDate, 'Encode Sans',
+                            12.sp, FontWeight.w700, 0xff606060),
                     const Image(image: AssetImage(calender)),
                   ],
                 ),
@@ -221,14 +217,23 @@ class _DrivingLicanceState extends State<DrivingLicance> {
             InkWell(
               onTap: () {
                 if (formKey.currentState!.validate() &&
-                    card1 != null &&
-                    card2 != null&&
-                    selectedDate.isNotEmpty
-                    ) {
+                    _imageFrondSide != null &&
+                    _imagebackSide != null &&
+                    selectedDate.isNotEmpty) {
+                  userProfileProvider.drivingLicenseBackImg =
+                      _imagebackSide!.path;
+                  userProfileProvider.drivingLicenseExpiryDate =
+                      selectedDate.toString();
+                  userProfileProvider.drivingLicenseFrontImg =
+                      _imageFrondSide!.path;
+
+                  userProfileProvider.drivingLicenseNumber =
+                      drivingLicanceCardNumberController.text;
+
                   print(card1);
                   print(card2);
                   print(drivingLicanceCardNumberController.text);
-print(selectedDate);
+                  print(selectedDate);
                   print('Is Velidate');
 
                   Navigator.pushNamed(context, '/enlistmentCertificate');
@@ -254,15 +259,14 @@ print(selectedDate);
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                 Text(
+                      Text(
                         "Next",
                         style: TextStyle(
                             color: const Color(0xffFFFFFF),
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w700,
                             fontFamily: 'Encode Sans'),
-                      )
-                      ,
+                      ),
                       const Icon(
                         Icons.arrow_forward,
                         color: Color(0xffFFFFFF),
@@ -276,6 +280,26 @@ print(selectedDate);
         ),
       )),
     );
+  }
+
+  File? _imageFrondSide;
+  File? _imagebackSide;
+  Future<void> openFilePickerFront() async {
+    print("File Picker");
+    var image = await pickImageFromGalleryOrCamera(context);
+    if (image == null) return;
+
+    setState(() => _imageFrondSide = image);
+    // cropImage(image);
+  }
+
+  Future<void> openFilePickerBack() async {
+    print("File Picker");
+    var image = await pickImageFromGalleryOrCamera(context);
+    if (image == null) return;
+
+    setState(() => _imagebackSide = image);
+    // cropImage(image);
   }
 
   Widget textFormField(

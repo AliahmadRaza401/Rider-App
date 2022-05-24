@@ -38,20 +38,20 @@ class _PersonalInformationState extends State<PersonalInformation> {
         Provider.of<UserProfileProvider>(context, listen: false);
   }
 
-  File? _image;
-  final picker = ImagePicker();
+  // File? _image;
+  // final picker = ImagePicker();
 
-  Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+  // Future getImage() async {
+  //   final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
+  //   setState(() {
+  //     if (pickedFile != null) {
+  //       _image = File(pickedFile.path);
+  //     } else {
+  //       print('No image selected.');
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -74,143 +74,189 @@ class _PersonalInformationState extends State<PersonalInformation> {
         ),
         child: Form(
           key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomWidget.heightSizedBoxWidget(40.h),
-              // FlatButton(onPressed: () => getImage(), child: Text('Press me')),
-              // Flexible(
-              //     child:
-              //         _image != null ? Image.file(_image!) : Text('no Image')),
-              Center(
-                child: GestureDetector(
-                  onTap: () async {
-                    getImage();
-                  },
-                  child: _image != null
-                      ? CircleAvatar(
-                          radius: 60,
-                          backgroundImage: FileImage(_image!),
-                        )
-                      : Image.asset(pictureframe),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CustomWidget.heightSizedBoxWidget(40.h),
+                // FlatButton(onPressed: () => getImage(), child: Text('Press me')),
+                // Flexible(
+                //     child:
+                //         _image != null ? Image.file(_image!) : Text('no Image')),
+                Center(
+                  child: GestureDetector(
+                    onTap: () async {
+                      openFilePicker();
+                    },
+                    child: _image != null
+                        ? CircleAvatar(
+                            radius: 60,
+                            backgroundImage: FileImage(_image!),
+                          )
+                        : Image.asset(pictureframe),
+                  ),
                 ),
-              ),
-              CustomWidget.heightSizedBoxWidget(20.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomWidget.textWidget('Upload Photo', 'Encode Sans', 12.sp,
-                      FontWeight.w700, 0xff0055cfa),
-                  CustomWidget.widthSizedBoxWidget(5.w),
-                  const Image(image: AssetImage(uploadcloud)),
-                ],
-              ),
-              CustomWidget.heightSizedBoxWidget(30.h),
-              textFormField('Enter full name', profile, false, 0xff606060,
-                  12.sp, FontWeight.w400, 0xffAEAEB2, enterFullNameController),
-              CustomWidget.heightSizedBoxWidget(15.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Image(image: AssetImage(info)),
-                  CustomWidget.widthSizedBoxWidget(3.w),
-                  CustomWidget.textWidget('Same as NID Card', 'Encode Sans',
-                      12.sp, FontWeight.w400, 0xff606060),
-                ],
-              ),
-              CustomWidget.heightSizedBoxWidget(20.h),
-              textFormField(
-                'Enter mobile number',
-                phone,
-                true,
-                0xff606060,
-                12.sp,
-                FontWeight.w400,
-                0xffAEAEB2,
-                enterMobileNumberController,
-              ),
-              CustomWidget.heightSizedBoxWidget(40.h),
-              Align(
-                  alignment: Alignment.bottomLeft,
-                  child: CustomWidget.textWidget('Select vehicle',
-                      'Encode Sans', 18.sp, FontWeight.w600, 0xff2b2b2b)),
-              CustomWidget.heightSizedBoxWidget(20.h),
-              textFormField(
-                'Bike',
-                bicke,
-                false,
-                0xffCE1A17,
-                16.sp,
-                FontWeight.w700,
-                0xffce1a17,
-                vehicleController,
-              ),
-              CustomWidget.heightSizedBoxWidget(100.h),
-              InkWell(
-                onTap: () {
-                  if (formKey.currentState!.validate() && _image != null) {
-                    // print(file);
-                    // print(enterFullNameController.text);
-                    // print(enterMobileNumberController.text);
-                    // print(vehicleController.text);
+                CustomWidget.heightSizedBoxWidget(20.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomWidget.textWidget('Upload Photo', 'Encode Sans',
+                        12.sp, FontWeight.w700, 0xff0055cfa),
+                    CustomWidget.widthSizedBoxWidget(5.w),
+                    const Image(image: AssetImage(uploadcloud)),
+                  ],
+                ),
+                CustomWidget.heightSizedBoxWidget(30.h),
+                textFormField(
+                    'Enter full name',
+                    profile,
+                    false,
+                    0xff606060,
+                    12.sp,
+                    FontWeight.w400,
+                    0xffAEAEB2,
+                    enterFullNameController),
+                CustomWidget.heightSizedBoxWidget(15.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Image(image: AssetImage(info)),
+                    CustomWidget.widthSizedBoxWidget(3.w),
+                    CustomWidget.textWidget('Same as NID Card', 'Encode Sans',
+                        12.sp, FontWeight.w400, 0xff606060),
+                  ],
+                ),
+                CustomWidget.heightSizedBoxWidget(20.h),
+                textFormField(
+                  'Enter mobile number',
+                  phone,
+                  true,
+                  0xff606060,
+                  12.sp,
+                  FontWeight.w400,
+                  0xffAEAEB2,
+                  enterMobileNumberController,
+                ),
+                CustomWidget.heightSizedBoxWidget(40.h),
+                Align(
+                    alignment: Alignment.bottomLeft,
+                    child: CustomWidget.textWidget('Select vehicle',
+                        'Encode Sans', 18.sp, FontWeight.w600, 0xff2b2b2b)),
+                CustomWidget.heightSizedBoxWidget(20.h),
+                textFormField(
+                  'Bike',
+                  bicke,
+                  false,
+                  0xffCE1A17,
+                  16.sp,
+                  FontWeight.w700,
+                  0xffce1a17,
+                  vehicleController,
+                ),
+                CustomWidget.heightSizedBoxWidget(100.h),
+                InkWell(
+                  onTap: () {
+                    if (formKey.currentState!.validate() && _image != null) {
+                      // print(file);
+                      // print(enterFullNameController.text);
+                      // print(enterMobileNumberController.text);
+                      // print(vehicleController.text);
 
-                    // print('Is Velidate');
-                    // userProfileProvider.enlistmentCertificateNumber =
-                    //     "sdfsdfsd";
-                    print(_image!.path);
-                    userProfileProvider.personalName =
-                        enterFullNameController.text;
-                    userProfileProvider.personalMobileNumber =
-                        enterMobileNumberController.text;
-                    userProfileProvider.personalVehicle =
-                        vehicleController.text;
-                    print(userProfileProvider.personalName);
-                    print(userProfileProvider.personalMobileNumber);
-                    print(userProfileProvider.personalVehicle);
-                    // Navigator.pushNamed(context, '/nationaIDCardScreen');
-                  } else {
-                    print('Is  Not Velidate');
-                  }
-                },
-                child: Container(
-                    height: 56.h,
-                    width: 323.w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.sp),
-                      // color: const Color(0xffCE1A17),
-                      boxShadow: const <BoxShadow>[
-                        BoxShadow(
-                          color: Color(0xffEAC4C7),
-                          blurRadius: 15.0,
-                          offset: Offset(0.0, 0.55),
-                        ),
-                      ],
-                      color: const Color(0xffCE1A17),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Next",
-                          style: TextStyle(
-                              color: const Color(0xffFFFFFF),
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'Encode Sans'),
-                        ),
-                        const Icon(
-                          Icons.arrow_forward,
-                          color: Color(0xffFFFFFF),
-                        )
-                      ],
-                    )),
-              ),
-            ],
+                      // print('Is Velidate');
+                      // userProfileProvider.enlistmentCertificateNumber =
+                      //     "sdfsdfsd";
+                      print(_image!.path);
+                      userProfileProvider.personalName =
+                          enterFullNameController.text;
+                      userProfileProvider.personalMobileNumber =
+                          enterMobileNumberController.text;
+                      userProfileProvider.personalVehicle =
+                          vehicleController.text;
+                      print(userProfileProvider.personalName);
+                      print(userProfileProvider.personalMobileNumber);
+                      print(userProfileProvider.personalVehicle);
+                      Navigator.pushNamed(context, '/nationaIDCardScreen');
+                    } else {
+                      print('Is  Not Velidate');
+                    }
+                  },
+                  child: Container(
+                      height: 56.h,
+                      width: 323.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.sp),
+                        // color: const Color(0xffCE1A17),
+                        boxShadow: const <BoxShadow>[
+                          BoxShadow(
+                            color: Color(0xffEAC4C7),
+                            blurRadius: 15.0,
+                            offset: Offset(0.0, 0.55),
+                          ),
+                        ],
+                        color: const Color(0xffCE1A17),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Next",
+                            style: TextStyle(
+                                color: const Color(0xffFFFFFF),
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Encode Sans'),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward,
+                            color: Color(0xffFFFFFF),
+                          )
+                        ],
+                      )),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  File? _image;
+  Future<void> openFilePicker() async {
+    print("File Picker");
+    var image = await pickImageFromGalleryOrCamera(context);
+    if (image == null) return;
+
+    setState(() => _image = image);
+    // cropImage(image);
+  }
+
+  /// Crop Image
+  cropImage(filePath) async {
+    File? croppedFile = await ImageCropper().cropImage(
+        sourcePath: filePath.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
+    if (croppedFile != null) {
+      setState(() {
+        _image = croppedFile;
+      });
+    }
   }
 
   // Widget customButtonWidget()  async{

@@ -51,6 +51,8 @@ dependencies:
   firebase_analytics: ^9.1.2
   cloud_firestore: ^3.1.10
   image_picker: ^0.8.2
+  google_fonts: ^2.3.1
+  shared_preferences: ^2.0.13
 
 dev_dependencies:
   flutter_test:

@@ -3,10 +3,14 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:ride_star/Images/images.dart';
+import 'package:ride_star/Services/imagPicker.dart';
 
 import '../../Custom Widgets/customWidgets.dart';
+import '../../Provider/authenticationProvider.dart';
 
 class NationaIDCardScreen extends StatefulWidget {
   const NationaIDCardScreen({Key? key}) : super(key: key);
@@ -20,6 +24,16 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
   PlatformFile? card1;
   PlatformFile? card2;
   TextEditingController enterNIDCardNumberController = TextEditingController();
+
+  UserProfileProvider userProfileProvider = UserProfileProvider();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    userProfileProvider =
+        Provider.of<UserProfileProvider>(context, listen: false);
+  }
 
   DateTime selectedDate1 = DateTime.now();
   String selectedDate = '';
@@ -97,19 +111,20 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
               CustomWidget.heightSizedBoxWidget(5.h),
               GestureDetector(
                 onTap: () async {
-                  FilePickerResult? result =
-                      await FilePicker.platform.pickFiles();
-                  if (result == null) {
-                    return;
-                  } else {
-                    card1 = result.files.first;
-                    setState(() {
-                      print(card1);
-                    });
-                  }
+                  openFilePickerFront();
                 },
-                child: card1 != null
+                child: _imageFrondSide == null
                     ? Container(
+                        height: 202.h,
+                        width: 323.w,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(card),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      )
+                    : Container(
                         height: 202.h,
                         width: 323.w,
                         decoration: BoxDecoration(
@@ -117,18 +132,8 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
                           border: Border.all(color: Color(0xff888888)),
                           image: DecorationImage(
                             image: FileImage(
-                              File(card1!.path.toString()),
+                              _imageFrondSide!,
                             ),
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      )
-                    : Container(
-                        height: 202.h,
-                        width: 323.w,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(card),
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -142,18 +147,9 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
               CustomWidget.heightSizedBoxWidget(5.h),
               GestureDetector(
                 onTap: () async {
-                  FilePickerResult? result =
-                      await FilePicker.platform.pickFiles();
-                  if (result == null) {
-                    return;
-                  } else {
-                    card2 = result.files.first;
-                    setState(() {
-                      print(card2);
-                    });
-                  }
+                  openFilePickerBack();
                 },
-                child: card2 != null
+                child: _imagebackSide != null
                     ? Container(
                         height: 202.h,
                         width: 323.w,
@@ -162,9 +158,9 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
                           border: Border.all(color: Color(0xff888888)),
                           image: DecorationImage(
                             image: FileImage(
-                              File(card2!.path.toString()),
+                              _imagebackSide!,
                             ),
-                            fit: BoxFit.contain,
+                            fit: BoxFit.fill,
                           ),
                         ),
                       )
@@ -194,16 +190,21 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
               CustomWidget.heightSizedBoxWidget(45.h),
               InkWell(
                 onTap: () {
-                  if (formKey.currentState!.validate() &&
-                      card1 != null &&
-                      card2 != null) {
+                  if (enterNIDCardNumberController.text != null &&
+                      _imageFrondSide != null &&
+                      _imagebackSide != null) {
+                    userProfileProvider.nidBackImg = _imagebackSide!.path;
+                    userProfileProvider.nidCardNumber =
+                        enterNIDCardNumberController.text;
+                    userProfileProvider.nidFrontImg = _imageFrondSide!.path;
+
                     print(card1);
                     print(card2);
                     print(enterNIDCardNumberController.text);
 
                     print('Is Velidate');
 
-                    // Navigator.pushNamed(context, '/drivingLicence');
+                    Navigator.pushNamed(context, '/drivingLicence');
                   } else {
                     print('Is  Not Velidate');
                   }
@@ -248,6 +249,53 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
         ),
       ),
     );
+  }
+
+  File? _imageFrondSide;
+  File? _imagebackSide;
+  Future<void> openFilePickerFront() async {
+    print("File Picker");
+    var image = await pickImageFromGalleryOrCamera(context);
+    if (image == null) return;
+
+    setState(() => _imageFrondSide = image);
+    // cropImage(image);
+  }
+
+  Future<void> openFilePickerBack() async {
+    print("File Picker");
+    var image = await pickImageFromGalleryOrCamera(context);
+    if (image == null) return;
+
+    setState(() => _imagebackSide = image);
+    // cropImage(image);
+  }
+
+  /// Crop Image
+  cropImage(filePath) async {
+    File? croppedFile = await ImageCropper().cropImage(
+        sourcePath: filePath.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
+    if (croppedFile != null) {
+      setState(() {
+        _imagebackSide = croppedFile;
+      });
+    }
   }
 
   Widget textFormField(
