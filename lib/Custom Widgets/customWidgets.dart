@@ -72,7 +72,7 @@ class CustomWidget {
     return Text(
       text,
       style: TextStyle(
-        fontFamily: fontfamily,
+        fontFamily: fontfamily == '' ? 'Encode Sans' : fontfamily,
         color: Color(textcolor),
         fontSize: fontSize,
         fontWeight: fontWeignt,

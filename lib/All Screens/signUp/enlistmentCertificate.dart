@@ -23,7 +23,7 @@ class EnlistmentCertificate extends StatefulWidget {
 class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
   final formKey = GlobalKey<FormState>();
   PlatformFile? card1;
-  // TextEditingController enlistmentNumberController = TextEditingController();
+  TextEditingController enlistmentNumberController = TextEditingController();
   late UserProfileProvider userProfileProvider;
 
   @override
@@ -85,6 +85,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
 
   @override
   Widget build(BuildContext context) {
+    bool loading = Provider.of<UserProfileProvider>(context).loading;
     return Scaffold(
       appBar: CustomWidget.setAppBar(
         context,
@@ -145,7 +146,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
               12.sp,
               FontWeight.w400,
               0xffAEAEB2,
-              userProfileProvider.enlistmentCertificateNumber,
+              enlistmentNumberController,
             ),
             CustomWidget.heightSizedBoxWidget(45.h),
             InkWell(
@@ -166,7 +167,9 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
                     // datepicker == null
                     //     ?
                     CustomWidget.textWidget(
-                        'Enlistment Certificate Expiry Date',
+                        selectedDate == null
+                            ? 'Enlistment Certificate Expiry Date'
+                            : selectedDate,
                         'Encode Sans',
                         12.sp,
                         FontWeight.w700,
@@ -179,54 +182,60 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
               ),
             ),
             CustomWidget.heightSizedBoxWidget(90.h),
-            InkWell(
-              onTap: () {
-                if (formKey.currentState!.validate() &&
-                    _image != null &&
-                    selectedDate.isNotEmpty) {
-                  userProfileProvider.enlistmentCertificateExpiryDate =
-                      selectedDate;
-                  userProfileProvider.enlistmentCertificateImage = _image!.path;
+            loading == true
+                ? CircularProgressIndicator(
+                    color: Colors.red,
+                  )
+                : InkWell(
+                    onTap: () {
+                      if (formKey.currentState!.validate() &&
+                          _image != null &&
+                          selectedDate.isNotEmpty) {
+                        userProfileProvider.enlistmentCertificateNumber =
+                            enlistmentNumberController.text;
+                        userProfileProvider.enlistmentCertificateExpiryDate =
+                            selectedDate;
+                        userProfileProvider.enlistmentCertificateImage = _image;
 
-                  userProfileProvider.postDetailsToFirestore(context);
-                  // Navigator.pushNamed(context, '/home');
-                } else {
-                  print('Is  Not Velidate');
-                }
-              },
-              child: Container(
-                  height: 56.h,
-                  width: 323.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.sp),
-                    // color: const Color(0xffCE1A17),
-                    boxShadow: const <BoxShadow>[
-                      BoxShadow(
-                        color: Color(0xffEAC4C7),
-                        blurRadius: 15.0,
-                        offset: Offset(0.0, 0.55),
-                      ),
-                    ],
-                    color: const Color(0xffCE1A17),
+                        userProfileProvider.postDetailsToFirestore(context);
+                        // Navigator.pushNamed(context, '/home');
+                      } else {
+                        print('Is  Not Velidate');
+                      }
+                    },
+                    child: Container(
+                        height: 56.h,
+                        width: 323.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.sp),
+                          // color: const Color(0xffCE1A17),
+                          boxShadow: const <BoxShadow>[
+                            BoxShadow(
+                              color: Color(0xffEAC4C7),
+                              blurRadius: 15.0,
+                              offset: Offset(0.0, 0.55),
+                            ),
+                          ],
+                          color: const Color(0xffCE1A17),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "SignUp ",
+                              style: TextStyle(
+                                  color: const Color(0xffFFFFFF),
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'Encode Sans'),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward,
+                              color: Color(0xffFFFFFF),
+                            )
+                          ],
+                        )),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "SignUp ",
-                        style: TextStyle(
-                            color: const Color(0xffFFFFFF),
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: 'Encode Sans'),
-                      ),
-                      const Icon(
-                        Icons.arrow_forward,
-                        color: Color(0xffFFFFFF),
-                      )
-                    ],
-                  )),
-            ),
             // CustomWidget.customButtonWidget(context, '/home', 'Next  '),
           ],
         ),

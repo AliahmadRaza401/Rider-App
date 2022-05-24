@@ -209,10 +209,10 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
                   if (enterNIDCardNumberController.text != null &&
                       _imageFrondSide != null &&
                       _imagebackSide != null) {
-                    userProfileProvider.nidBackImg = _imagebackSide!.path;
+                    userProfileProvider.nidBackImg = _imagebackSide;
                     userProfileProvider.nidCardNumber =
                         enterNIDCardNumberController.text;
-                    userProfileProvider.nidFrontImg = _imageFrondSide!.path;
+                    userProfileProvider.nidFrontImg = _imageFrondSide;
 
                     Navigator.pushNamed(context, '/drivingLicence');
                   } else {
