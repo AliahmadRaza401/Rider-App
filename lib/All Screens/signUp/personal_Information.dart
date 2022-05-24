@@ -22,7 +22,7 @@ class PersonalInformation extends StatefulWidget {
 }
 
 class _PersonalInformationState extends State<PersonalInformation> {
-  // PlatformFile? file;
+  File? _image;
   TextEditingController enterFullNameController = TextEditingController();
   TextEditingController enterMobileNumberController = TextEditingController();
   TextEditingController vehicleController = TextEditingController();
@@ -32,30 +32,13 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     userProfileProvider =
         Provider.of<UserProfileProvider>(context, listen: false);
   }
 
-  // File? _image;
-  // final picker = ImagePicker();
-
-  // Future getImage() async {
-  //   final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-  //   setState(() {
-  //     if (pickedFile != null) {
-  //       _image = File(pickedFile.path);
-  //     } else {
-  //       print('No image selected.');
-  //     }
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    userProfileProvider.enlistmentCertificateNumber = "sdfsdfsd";
     return Scaffold(
       backgroundColor: ColorsX.screenBackgrounde,
       appBar: CustomWidget.setAppBar(
@@ -165,10 +148,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           enterMobileNumberController.text;
                       userProfileProvider.personalVehicle =
                           vehicleController.text;
-                      print(userProfileProvider.personalName);
-                      print(userProfileProvider.personalMobileNumber);
-                      print(userProfileProvider.personalVehicle);
-                      Navigator.pushNamed(context, '/nationaIDCardScreen');
+                      // Navigator.pushNamed(context, '/nationaIDCardScreen');
                     } else {
                       print('Is  Not Velidate');
                     }
@@ -214,14 +194,17 @@ class _PersonalInformationState extends State<PersonalInformation> {
     );
   }
 
-  File? _image;
   Future<void> openFilePicker() async {
     print("File Picker");
     var image = await pickImageFromGalleryOrCamera(context);
     if (image == null) return;
 
-    setState(() => _image = image);
-    // cropImage(image);
+    // setState(() => _image = image);
+    setState(() {
+      _image = image;
+          // cropImage(image);
+    });
+
   }
 
   /// Crop Image
@@ -268,20 +251,14 @@ class _PersonalInformationState extends State<PersonalInformation> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
+      padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           controller: controllerName,
-
           textInputAction: TextInputAction.next,
           keyboardType: keyBordType == true
               ? TextInputType.number
               : TextInputType.emailAddress,
-
-          // // obscureText: password == true ? obscureText : false,
-          // cursorColor:
-          //     white == true ? AppColors.customWhite : AppColors.customBlack,
-          // cursorWidth: 2.0,
-          // cursorHeight: AppSizes.dynamicHeight(context, .03),
           onChanged: (value) {
             controllerName = value;
           },

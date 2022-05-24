@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:ride_star/Custom%20Widgets/customWidgets.dart';
+import 'package:ride_star/Provider/authenticationProvider.dart';
+import 'package:ride_star/Utils/custom_toast.dart';
 
 import '../../Images/images.dart';
+import '../../Provider/tripProvider.dart';
 import '../ConstFile.dart';
 
 class Home extends StatefulWidget {
@@ -17,7 +21,25 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool checkStatus = false;
+  TripProvider driverTripProvider = TripProvider();
+
   var driverCurrentLoaction;
+  var diveraddress;
+  var drivercurrentlat;
+  var drivercurrentlong;
+
+  var destinationLoaction;
+  var destinationaddress;
+  var destinationcurrentlat;
+  var destinationcurrentlong;
+
+  String tripfear = '';
+  String prise = '';
+  String diatance = '';
+  String time = '';
+  bool fear = false;
+
   GoogleMapController? myController;
 
   final LatLng _center = const LatLng(45.521563, -122.677433);
@@ -43,6 +65,7 @@ class _HomeState extends State<Home> {
         .then((icon) {
       customIcon = icon;
     });
+    // driverTripProvider = Provider.of<TripProvider>(context, listen: false);
     // _loadMapStyles();
     super.initState();
   }
@@ -107,14 +130,6 @@ class _HomeState extends State<Home> {
                   // _addPolyLines();
                 },
               ),
-
-              // child: GoogleMap(
-              //   onMapCreated: _onMapCreated,
-              //   initialCameraPosition: CameraPosition(
-              //     target: _center,
-              //     zoom: 11.0,
-              //   ),
-              // ),
             ),
             CustomWidget.heightSizedBoxWidget(21.h),
             InkWell(
@@ -137,37 +152,128 @@ class _HomeState extends State<Home> {
                             driverCurrentLoaction = result;
                             Navigator.of(context).pop();
                             setState(() {
-                              print(driverCurrentLoaction);
+                              print(driverCurrentLoaction.formattedAddress);
+                              print(
+                                  driverCurrentLoaction.geometry!.location.lat);
+                              print(driverCurrentLoaction.geometry!.location.lng
+                                  .toString());
+
+                              diveraddress =
+                                  driverCurrentLoaction.formattedAddress;
+
+                              drivercurrentlat =
+                                  driverCurrentLoaction.geometry!.location.lat;
+                              drivercurrentlong = driverCurrentLoaction
+                                  .geometry!.location.lng
+                                  .toString();
                             });
-                            // setState(() {
-                            //   deliveryProvider.pickAddress.text =
-                            //       selectedPlace2!.formattedAddress
-                            //           .toString();
-                            //   deliveryProvider.pickupLat =
-                            //       selectedPlace2!
-                            //           .geometry!.location.lat
-                            //           .toString();
-                            //   deliveryProvider.pickupLong =
-                            //       selectedPlace2!
-                            //           .geometry!.location.lng
-                            //           .toString();
-                            // });
                           })),
                 );
               },
-              child: Text('Driver’s current loaction')
-              // textFormField('Driver’s current loaction', location, true,
-              //     0xff606060, 12.sp, FontWeight.w400, 0xffAEAEB2),
+              child: diveraddress == null
+                  ? CustomWidget.textWidgetWithBorder(
+                      'Driver’s current loaction')
+                  : CustomWidget.textWidgetWithBorder(
+                      driverCurrentLoaction!.formattedAddress,
+                    ),
             ),
             CustomWidget.heightSizedBoxWidget(21.h),
-            textFormField('Destination', location, true, 0xff606060, 12.sp,
-                FontWeight.w400, 0xffAEAEB2),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PlacePicker(
+                          apiKey: mapKey,
+                          hintText: "Find a place ...",
+                          searchingText: "Please wait ...",
+                          selectText: "Select place",
+                          outsideOfPickAreaText: "Place not in area",
+                          initialPosition: initialLatLng,
+                          useCurrentLocation: true,
+                          selectInitialPosition: true,
+                          usePinPointingSearch: true,
+                          usePlaceDetailSearch: true,
+                          onPlacePicked: (result) {
+                            destinationLoaction = result;
+                            Navigator.of(context).pop();
+                            setState(() {
+                              print(destinationLoaction.formattedAddress);
+                              print(destinationLoaction.geometry!.location.lat);
+                              print(destinationLoaction.geometry!.location.lng
+                                  .toString());
+
+                              destinationaddress =
+                                  destinationLoaction.formattedAddress;
+
+                              destinationcurrentlat =
+                                  destinationLoaction.geometry!.location.lat;
+                              destinationcurrentlong = destinationLoaction
+                                  .geometry!.location.lng
+                                  .toString();
+                            });
+                          })),
+                );
+              },
+              child: destinationaddress == null
+                  ? CustomWidget.textWidgetWithBorder('Destination')
+                  : CustomWidget.textWidgetWithBorder(
+                      destinationLoaction!.formattedAddress,
+                    ),
+            ),
             CustomWidget.heightSizedBoxWidget(21.h),
-            checktextFormField('Fare', m1, true, 0xff606060, 12.sp,
-                FontWeight.w400, 0xffAEAEB2),
+            fearWidgetContainer(),
+            // checktextFormField('Fare', m1, true, 0xff606060, 12.sp,
+            //     FontWeight.w400, 0xffAEAEB2),
             CustomWidget.heightSizedBoxWidget(41.h),
-            CustomWidget.customButtonWidget(
-                context, '/enterMobileNumber', 'Next  ')
+            // CustomWidget.customButtonWidget(
+            //     context, '/enterMobileNumber', 'Next  ')
+            InkWell(
+              onTap: () {
+                if (diveraddress == null) {
+                  ToastUtils.showCustomToast(context,
+                      'Driver’s current loaction is Missing', Colors.red);
+                } else if (destinationaddress == null) {
+                  ToastUtils.showCustomToast(
+                      context, 'Destination loaction is Missing', Colors.red);
+                } else {
+                  ToastUtils.showCustomToast(
+                      context, 'EveryThing Ok', Colors.green);
+                }
+              },
+              child: Container(
+                  height: 56.h,
+                  width: 323.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.sp),
+                    // color: const Color(0xffCE1A17),
+                    boxShadow: const <BoxShadow>[
+                      BoxShadow(
+                        color: Color(0xffEAC4C7),
+                        blurRadius: 15.0,
+                        offset: Offset(0.0, 0.55),
+                      ),
+                    ],
+                    color: const Color(0xffCE1A17),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Next",
+                        style: TextStyle(
+                            color: const Color(0xffFFFFFF),
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'Encode Sans'),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward,
+                        color: Color(0xffFFFFFF),
+                      )
+                    ],
+                  )),
+            ),
           ],
         ),
       ),
@@ -232,6 +338,7 @@ class _HomeState extends State<Home> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
+      padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           // controller: myController,
@@ -278,5 +385,62 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  Widget fearWidgetContainer() {
+    return Container(
+        height: 56.h,
+        width: 323.w,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(
+            color: const Color(0xffAEAEB2),
+            width: 1,
+          ),
+        ),
+        padding: EdgeInsets.all(1.h),
+        child: Row(
+          children: [
+            const Image(image: AssetImage(m1)),
+            CustomWidget.widthSizedBoxWidget(6.w),
+            Text(
+              "Fare",
+              style: TextStyle(
+                color: const Color(0xff606060),
+                fontSize: 12.sp,
+                fontFamily: 'Encode Sans',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            Expanded(child: Container()),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  checkStatus = !checkStatus;
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.only(right: 10.w, left: 10),
+                height: 36.h,
+                width: 100.w,
+                child: Center(
+                    child: CustomWidget.textWidget(
+                        'Check',
+                        'Encode Sans',
+                        12.sp,
+                        FontWeight.w700,
+                        checkStatus == true ? 0xff319C02 : 0xff606060)),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    border: Border.all(
+                      color: checkStatus == true
+                          ? Color(0xff319C02)
+                          : Color(0xff606060),
+                      width: 1,
+                    )),
+              ),
+            ),
+          ],
+        ));
   }
 }
