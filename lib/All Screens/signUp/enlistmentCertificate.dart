@@ -296,6 +296,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
+         padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           controller: controllerName,

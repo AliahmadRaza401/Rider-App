@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../Images/images.dart';
+
 class CustomWidget {
   ////////////////////////////////  AppBar   ////////////////////
   static setAppBar(
@@ -74,6 +76,32 @@ class CustomWidget {
         color: Color(textcolor),
         fontSize: fontSize,
         fontWeight: fontWeignt,
+      ),
+    );
+  }
+
+/////////////////////////////// TextWidget with Border //////////////////////
+  static textWidgetWithBorder(
+    var text
+  ) {
+    return Container(
+      height: 56.h,
+      width: 323.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: const Color(0xffAEAEB2), width: 1),
+      ),
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(
+        left: 6.w,
+      ),
+      child: Row(
+        children: [
+          const Image(image: AssetImage(location)),
+          CustomWidget.widthSizedBoxWidget(9.0.w),
+          CustomWidget.textWidget(text, 'Encode Sans',
+              12.sp, FontWeight.w400, 0xff606060),
+        ],
       ),
     );
   }

@@ -8,12 +8,12 @@ import 'package:flutter/services.dart';
 class MapServices {
   static Future<Uint8List> getMarkerImage(BuildContext context) async {
     ByteData byteData =
-        await DefaultAssetBundle.of(context).load("asset/blackMarker.png");
+        await DefaultAssetBundle.of(context).load("assets/images/car.png");
     return byteData.buffer.asUint8List();
   }
 
   static Future<Uint8List> getMarkerWithSize(int width) async {
-    ByteData data = await rootBundle.load("asset/blackMarker.png");
+    ByteData data = await rootBundle.load("assets/images/car.png");
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
         targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
@@ -21,8 +21,9 @@ class MapServices {
         .buffer
         .asUint8List();
   }
+
   static Future<Uint8List> getMarkerWithSize1(int width) async {
-    ByteData data = await rootBundle.load("asset/no_order.png");
+    ByteData data = await rootBundle.load("assets/images/a.png");
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
         targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
@@ -32,7 +33,7 @@ class MapServices {
   }
 
   static Future<Uint8List> getMarkerWithSize2(int width) async {
-    ByteData data = await rootBundle.load("asset/Rider.png");
+    ByteData data = await rootBundle.load("assets/images/a.png");
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
         targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
@@ -56,14 +57,13 @@ class MapServices {
         .catchError((error) => print(' update Location InDB Failed: $error'));
   }
 
-    static updateTrackStatusInDB(driverID, status) {
+  static updateTrackStatusInDB(driverID, status) {
     var collection = FirebaseFirestore.instance.collection('drivers');
     collection
         .doc(driverID)
         .update(
           {
             'trackStatus': status,
-         
           },
         ) // <-- Updated data
         .then((_) => print(

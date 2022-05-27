@@ -47,8 +47,6 @@ class _GoMapState extends State<GoMap> {
   var ridedistance = 0.0;
   late LatLng distination;
   late StreamSubscription geoLocatorListiner;
-  bool isPickup = false;
-  // late UserProvider userProvider;
 
   @override
   void initState() {

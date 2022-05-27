@@ -22,7 +22,7 @@ class PersonalInformation extends StatefulWidget {
 }
 
 class _PersonalInformationState extends State<PersonalInformation> {
-  // PlatformFile? file;
+  File? _image;
   TextEditingController enterFullNameController = TextEditingController();
   TextEditingController enterMobileNumberController = TextEditingController();
   TextEditingController vehicleController = TextEditingController();
@@ -32,30 +32,13 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     userProfileProvider =
         Provider.of<UserProfileProvider>(context, listen: false);
   }
 
-  // File? _image;
-  // final picker = ImagePicker();
-
-  // Future getImage() async {
-  //   final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-  //   setState(() {
-  //     if (pickedFile != null) {
-  //       _image = File(pickedFile.path);
-  //     } else {
-  //       print('No image selected.');
-  //     }
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    userProfileProvider.enlistmentCertificateNumber = "sdfsdfsd";
     return Scaffold(
       backgroundColor: ColorsX.screenBackgrounde,
       appBar: CustomWidget.setAppBar(
@@ -155,6 +138,51 @@ class _PersonalInformationState extends State<PersonalInformation> {
                   vehicleController,
                 ),
                 CustomWidget.heightSizedBoxWidget(100.h),
+                InkWell(onTap: () {
+                  if (formKey.currentState!.validate() && _image != null) {
+                    print(_image!.path);
+                    userProfileProvider.personalName =
+                        enterFullNameController.text;
+                    userProfileProvider.personalMobileNumber =
+                        enterMobileNumberController.text;
+                    userProfileProvider.personalVehicle =
+                        vehicleController.text;
+                    print(userProfileProvider.personalName);
+                    child:
+                    Container(
+                        height: 56.h,
+                        width: 323.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.sp),
+                          // color: const Color(0xffCE1A17),
+                          boxShadow: const <BoxShadow>[
+                            BoxShadow(
+                              color: Color(0xffEAC4C7),
+                              blurRadius: 15.0,
+                              offset: Offset(0.0, 0.55),
+                            ),
+                          ],
+                          color: const Color(0xffCE1A17),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Next",
+                              style: TextStyle(
+                                  color: const Color(0xffFFFFFF),
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'Encode Sans'),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward,
+                              color: Color(0xffFFFFFF),
+                            )
+                          ],
+                        ));
+                  }
+                }),
               ],
             ),
           ),
@@ -163,14 +191,16 @@ class _PersonalInformationState extends State<PersonalInformation> {
     );
   }
 
-  File? _image;
   Future<void> openFilePicker() async {
     print("File Picker");
     var image = await pickImageFromGalleryOrCamera(context);
     if (image == null) return;
 
-    setState(() => _image = image);
-    // cropImage(image);
+    // setState(() => _image = image);
+    setState(() {
+      _image = image;
+      // cropImage(image);
+    });
   }
 
   /// Crop Image
@@ -184,13 +214,13 @@ class _PersonalInformationState extends State<PersonalInformation> {
           CropAspectRatioPreset.ratio4x3,
           CropAspectRatioPreset.ratio16x9
         ],
-        androidUiSettings: AndroidUiSettings(
+        androidUiSettings: const AndroidUiSettings(
             toolbarTitle: 'Cropper',
             toolbarColor: Colors.deepOrange,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
-        iosUiSettings: IOSUiSettings(
+        iosUiSettings: const IOSUiSettings(
           minimumAspectRatio: 1.0,
         ));
     if (croppedFile != null) {
@@ -199,70 +229,6 @@ class _PersonalInformationState extends State<PersonalInformation> {
       });
     }
   }
-
-  // Widget customButtonWidget()  async{
-  //         //  MultipartFile img;
-  //   return InkWell(
-
-  //     onTap: () async {
-
-  //         //  img = await MultipartFile.fromFile(file!.path.toString());
-  //       if (formKey.currentState!.validate() && file != null) {
-
-  //         // print(file);
-  //         // print(enterFullNameController.text);
-  //         // print(enterMobileNumberController.text);
-  //         // print(vehicleController.text);
-
-  //         // print('Is Velidate');
-  //         // userProfileProvider.enlistmentCertificateNumber =
-  //         //     "sdfsdfsd";
-  //         userProfileProvider.personalName = enterFullNameController.text;
-  //         userProfileProvider.personalMobileNumber =
-  //             enterMobileNumberController.text;
-  //         userProfileProvider.personalVehicle = vehicleController.text;
-  //         print(userProfileProvider.personalName);
-  //         print(userProfileProvider.personalMobileNumber);
-  //         print(userProfileProvider.personalVehicle);
-  //         // Navigator.pushNamed(context, '/nationaIDCardScreen');
-  //       } else {
-  //         print('Is  Not Velidate');
-  //       }
-  //     },
-  //     child: Container(
-  //         height: 56.h,
-  //         width: 323.w,
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(10.sp),
-  //           // color: const Color(0xffCE1A17),
-  //           boxShadow: const <BoxShadow>[
-  //             BoxShadow(
-  //               color: Color(0xffEAC4C7),
-  //               blurRadius: 15.0,
-  //               offset: Offset(0.0, 0.55),
-  //             ),
-  //           ],
-  //           color: const Color(0xffCE1A17),
-  //         ),
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Text(
-  //               "Next",
-  //               style: TextStyle(
-  //                   color: const Color(0xffFFFFFF),
-  //                   fontSize: 16.sp,
-  //                   fontWeight: FontWeight.w700,
-  //                   fontFamily: 'Encode Sans'),
-  //             ),
-  //             const Icon(
-  //               Icons.arrow_forward,
-  //               color: Color(0xffFFFFFF),
-  //             )
-  //           ],
-  //         )),
-  //   );
-  // }
 
   Widget textFormField(
     String hinttext,
@@ -281,20 +247,14 @@ class _PersonalInformationState extends State<PersonalInformation> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
+      padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           controller: controllerName,
-
           textInputAction: TextInputAction.next,
           keyboardType: keyBordType == true
               ? TextInputType.number
               : TextInputType.emailAddress,
-
-          // // obscureText: password == true ? obscureText : false,
-          // cursorColor:
-          //     white == true ? AppColors.customWhite : AppColors.customBlack,
-          // cursorWidth: 2.0,
-          // cursorHeight: AppSizes.dynamicHeight(context, .03),
           onChanged: (value) {
             controllerName = value;
           },

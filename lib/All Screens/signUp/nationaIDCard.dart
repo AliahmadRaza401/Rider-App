@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ride_star/Images/images.dart';
@@ -20,6 +21,21 @@ class NationaIDCardScreen extends StatefulWidget {
 }
 
 class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
+  File? _image;
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
   final formKey = GlobalKey<FormState>();
   PlatformFile? card1;
   PlatformFile? card2;
@@ -198,12 +214,6 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
                         enterNIDCardNumberController.text;
                     userProfileProvider.nidFrontImg = _imageFrondSide;
 
-                    print(card1);
-                    print(card2);
-                    print(enterNIDCardNumberController.text);
-
-                    print('Is Velidate');
-
                     Navigator.pushNamed(context, '/drivingLicence');
                   } else {
                     print('Is  Not Velidate');
@@ -282,13 +292,13 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
           CropAspectRatioPreset.ratio4x3,
           CropAspectRatioPreset.ratio16x9
         ],
-        androidUiSettings: AndroidUiSettings(
+        androidUiSettings: const AndroidUiSettings(
             toolbarTitle: 'Cropper',
             toolbarColor: Colors.deepOrange,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
-        iosUiSettings: IOSUiSettings(
+        iosUiSettings: const IOSUiSettings(
           minimumAspectRatio: 1.0,
         ));
     if (croppedFile != null) {
@@ -314,6 +324,7 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
+         padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           controller: controllerName,
@@ -321,11 +332,6 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
           keyboardType: keyBordType == true
               ? TextInputType.number
               : TextInputType.emailAddress,
-          // // obscureText: password == true ? obscureText : false,
-          // cursorColor:
-          //     white == true ? AppColors.customWhite : AppColors.customBlack,
-          // cursorWidth: 2.0,
-          // cursorHeight: AppSizes.dynamicHeight(context, .03),
           validator: (value) {
             if (value!.isEmpty) {
               return "This field is required";

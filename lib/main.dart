@@ -2,20 +2,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:ride_star/All%20Screens/splashScreen/splashScreen.dart';
-
 import 'All Screens/Home/home.dart';
-import 'All Screens/signUp/personal_Information.dart';
 import 'Provider/allProvider.dart';
-import 'Provider/authenticationProvider.dart';
 import 'Routes/routes.dart';
 
-Future<void>  main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
     MultiProvider(
-      providers:allProvider,
+      providers: allProvider,
       child: const HomePage(),
     ),
   );
@@ -30,7 +26,7 @@ class HomePage extends StatelessWidget {
       designSize: Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (_) {
+      builder: (BuildContext context, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: '',
@@ -48,10 +44,8 @@ class HomePage extends StatelessWidget {
               child: widget!,
             );
           },
-          home: const PersonalInformation(),
-          // home: const AdminSideMenu(),
-          // home: const Home(),
-
+          home: const Home(),
+          // home: const PersonalInformation(),
           // home: const SplashScreen(),
         );
       },

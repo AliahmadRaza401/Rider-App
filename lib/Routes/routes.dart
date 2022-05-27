@@ -56,11 +56,14 @@ class Routes {
         return MaterialPageRoute(
           builder: (context) => const EnterMobileNumber(),
         );
-
-      case rideStart:
-        return MaterialPageRoute(
-          builder: (context) => const RideStart(),
-        );
+      // case conformOTP:
+      //   return MaterialPageRoute(
+      //     builder: (context) => const ConformOTP(),
+      //   );
+      // case rideStart:
+      //   return MaterialPageRoute(
+      //     builder: (context) => RideStart(),
+      //   );
       case paymentMethod:
         return MaterialPageRoute(
           builder: (context) => const PaymentMethod(),
