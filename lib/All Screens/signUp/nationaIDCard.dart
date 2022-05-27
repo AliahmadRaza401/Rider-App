@@ -47,8 +47,8 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    userProfileProvider =
-        Provider.of<UserProfileProvider>(context, listen: false);
+    // userProfileProvider =
+    //     Provider.of<UserProfileProvider>(context, listen: false);
   }
 
   DateTime selectedDate1 = DateTime.now();
@@ -206,15 +206,16 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
               CustomWidget.heightSizedBoxWidget(45.h),
               InkWell(
                 onTap: () {
-                  if (enterNIDCardNumberController.text != null &&
+                  if (enterNIDCardNumberController.text.isNotEmpty &&
                       _imageFrondSide != null &&
                       _imagebackSide != null) {
                     userProfileProvider.nidBackImg = _imagebackSide;
                     userProfileProvider.nidCardNumber =
                         enterNIDCardNumberController.text;
                     userProfileProvider.nidFrontImg = _imageFrondSide;
-
-                    Navigator.pushNamed(context, '/drivingLicence');
+                        print(userProfileProvider.personalVehicle);
+                      print(userProfileProvider.personalPicture);
+                    // Navigator.pushNamed(context, '/drivingLicence');
                   } else {
                     print('Is  Not Velidate');
                   }
@@ -324,7 +325,7 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
-         padding: EdgeInsets.all(1.h),
+      padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           controller: controllerName,

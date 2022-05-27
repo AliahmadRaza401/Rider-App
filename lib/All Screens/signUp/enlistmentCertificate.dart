@@ -7,7 +7,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ride_star/Provider/authenticationProvider.dart';
-import 'package:ride_star/Services/firebase_helper.dart';
 import 'package:ride_star/Services/imagPicker.dart';
 
 import '../../Custom Widgets/customWidgets.dart';
@@ -21,15 +20,19 @@ class EnlistmentCertificate extends StatefulWidget {
 }
 
 class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
+   UserProfileProvider userProfileProvider = UserProfileProvider();
   final formKey = GlobalKey<FormState>();
   PlatformFile? card1;
   TextEditingController enlistmentNumberController = TextEditingController();
-  late UserProfileProvider userProfileProvider;
+  //  UserProfileProvider userProfileProvider = UserProfileProvider();
+
+ 
+
 
   @override
   void initState() {
-    userProfileProvider =
-        Provider.of<UserProfileProvider>(context, listen: false);
+    // userProfileProvider =
+    //     Provider.of<UserProfileProvider>(context, listen: false);
     super.initState();
   }
 
@@ -85,7 +88,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
 
   @override
   Widget build(BuildContext context) {
-    bool loading = Provider.of<UserProfileProvider>(context).loading;
+    // bool loading = Provider.of<UserProfileProvider>(context).loading;
     return Scaffold(
       appBar: CustomWidget.setAppBar(
         context,
@@ -182,11 +185,12 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
               ),
             ),
             CustomWidget.heightSizedBoxWidget(90.h),
-            loading == true
+           userProfileProvider.loading == true
                 ? CircularProgressIndicator(
                     color: Colors.red,
                   )
-                : InkWell(
+                : 
+                InkWell(
                     onTap: () {
                       if (formKey.currentState!.validate() &&
                           _image != null &&
@@ -296,7 +300,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
-         padding: EdgeInsets.all(1.h),
+      padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           controller: controllerName,
