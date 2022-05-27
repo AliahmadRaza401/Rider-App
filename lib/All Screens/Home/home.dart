@@ -1,12 +1,17 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:ride_star/All%20Screens/Ride%20Start/rideStart.dart';
+import 'package:ride_star/All%20Screens/map/map_services.dart';
 import 'package:ride_star/Custom%20Widgets/customWidgets.dart';
 import 'package:ride_star/Provider/authenticationProvider.dart';
+import 'package:ride_star/Services/app_route.dart';
 import 'package:ride_star/Utils/custom_toast.dart';
 
 import '../../Images/images.dart';
@@ -23,7 +28,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool checkStatus = false;
   TripProvider driverTripProvider = TripProvider();
-
+  final Set<Marker> _markers = {};
+  late LatLng currentLaltg;
+  final Set<Marker> markers = new Set();
   var driverCurrentLoaction;
   var diveraddress;
   var drivercurrentlat;
@@ -50,7 +57,7 @@ class _HomeState extends State<Home> {
   final LatLng initialLatLng = LatLng(30.029585, 31.022356);
   final LatLng destinationLatLng = LatLng(30.060567, 30.962413);
 
-  Set<Marker> _markers = Set<Marker>();
+  // Set<Marker> _markers = Set<Marker>();
   late BitmapDescriptor customIcon;
 
   bool mapDarkMode = true;
@@ -59,15 +66,47 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(size: Size(50, 50)),
-            'assets/images/marker_car.png')
-        .then((icon) {
-      customIcon = icon;
-    });
+    locatePosition();
     // driverTripProvider = Provider.of<TripProvider>(context, listen: false);
     // _loadMapStyles();
     super.initState();
+  }
+
+  locatePosition() async {
+    print('i am in the location function');
+    LocationPermission permission;
+    permission = await Geolocator.requestPermission();
+    LocationPermission status = await Geolocator.checkPermission();
+    if (status == LocationPermission.denied) {
+      print("Location is Off =======================>>");
+    } else {
+      print("Location is ON =======================>>");
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      var currentPosition = position;
+      currentLaltg = LatLng(position.latitude, position.longitude);
+      // addmarkers(latLatPosition);
+      CameraPosition cameraPosition =
+          new CameraPosition(target: currentLaltg, zoom: 14);
+      myController!
+          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      addmarkers(currentLaltg);
+    }
+  }
+
+  Future<Set<Marker>> addmarkers(showLocation) async {
+    setState(() {
+      markers.add(Marker(
+          markerId: MarkerId('driver'),
+          position: showLocation,
+          infoWindow: InfoWindow(title: 'Driver'),
+          draggable: false,
+          zIndex: 2,
+          flat: true,
+          anchor: Offset(0.5, 0.5),
+          icon: BitmapDescriptor.defaultMarker));
+    });
+    return markers;
   }
 
   @override
@@ -118,12 +157,13 @@ class _HomeState extends State<Home> {
                 myLocationButtonEnabled: true,
                 zoomControlsEnabled: false,
                 mapToolbarEnabled: false,
-                markers: _markers,
+                markers: markers,
                 initialCameraPosition: CameraPosition(
                   target: initialLatLng,
                   zoom: 14.47,
                 ),
                 onMapCreated: (GoogleMapController controller) {
+                  myController = controller;
                   _controller.complete(controller);
                   // _setMapPins([LatLng(30.029585, 31.022356)]);
                   // _setMapStyle();
@@ -143,7 +183,7 @@ class _HomeState extends State<Home> {
                           searchingText: "Please wait ...",
                           selectText: "Select place",
                           outsideOfPickAreaText: "Place not in area",
-                          initialPosition: initialLatLng,
+                          initialPosition: currentLaltg,
                           useCurrentLocation: true,
                           selectInitialPosition: true,
                           usePinPointingSearch: true,
@@ -189,7 +229,7 @@ class _HomeState extends State<Home> {
                           searchingText: "Please wait ...",
                           selectText: "Select place",
                           outsideOfPickAreaText: "Place not in area",
-                          initialPosition: initialLatLng,
+                          initialPosition: currentLaltg,
                           useCurrentLocation: true,
                           selectInitialPosition: true,
                           usePinPointingSearch: true,
@@ -237,8 +277,13 @@ class _HomeState extends State<Home> {
                   ToastUtils.showCustomToast(
                       context, 'Destination loaction is Missing', Colors.red);
                 } else {
-                  ToastUtils.showCustomToast(
-                      context, 'EveryThing Ok', Colors.green);
+                  AppRoutes.push(
+                      context,
+                      RideStart(
+                          pickUpLat: drivercurrentlat,
+                          pickUpLong: drivercurrentlong,
+                          dropLat: destinationcurrentlat,
+                          dropLong: destinationcurrentlong));
                 }
               },
               child: Container(

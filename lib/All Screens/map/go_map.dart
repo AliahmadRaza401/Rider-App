@@ -1,39 +1,41 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_final_fields, unused_local_variable, avoid_print, avoid_function_literals_in_foreach_calls, unnecessary_null_comparison, unnecessary_new, must_be_immutable, use_key_in_widget_constructors, prefer_collection_literals, unused_field
+
 import 'dart:async';
 import 'dart:developer';
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:ride_star/All%20Screens/ConstFile.dart';
+import 'package:provider/provider.dart';
 import 'package:ride_star/All%20Screens/map/distace_calculate.dart';
 import 'package:ride_star/All%20Screens/map/map_services.dart';
 
-import '../../Custom Widgets/customWidgets.dart';
-import '../../Images/images.dart';
-
-class RideStart extends StatefulWidget {
+class GoMap extends StatefulWidget {
   double pickUpLat;
   double pickUpLong;
   double dropLat;
   double dropLong;
+  String driverID;
+  bool isPickup;
+  dynamic data;
 
-  RideStart({
-    required this.pickUpLat,
-    required this.pickUpLong,
-    required this.dropLat,
-    required this.dropLong,
-  });
+  GoMap(
+      {required this.pickUpLat,
+      required this.pickUpLong,
+      required this.dropLat,
+      required this.dropLong,
+      required this.driverID,
+      required this.data,
+      required this.isPickup});
 
   @override
-  State<RideStart> createState() => _RideStartState();
+  _GoMapState createState() => _GoMapState();
 }
 
-class _RideStartState extends State<RideStart> {
-  Completer<GoogleMapController> _controller = Completer();
-  GoogleMapController? myController;
+class _GoMapState extends State<GoMap> {
   final Set<Marker> _markers = {};
   late LatLng currentLaltg;
   final Set<Marker> markers = new Set();
@@ -51,9 +53,21 @@ class _RideStartState extends State<RideStart> {
     super.initState();
     // userProvider = Provider.of<UserProvider>(context, listen: false);
     _polylinePoints = PolylinePoints();
-    setState(() {
-      distination = LatLng(widget.dropLat, widget.dropLong);
-    });
+    if (widget.isPickup == false) {
+      setState(() {
+        distination = LatLng(widget.pickUpLat, widget.pickUpLong);
+      });
+    } else {
+      setState(() {
+        distination = LatLng(widget.dropLat, widget.dropLong);
+      });
+    }
+    // FCMServices.sendFCM(
+    //   'user',
+    //   widget.userID,
+    //   "Start Moving",
+    //   "Barbar Now Start Moving",
+    // );
   }
 
   LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
@@ -64,156 +78,47 @@ class _RideStartState extends State<RideStart> {
     log(widget.pickUpLat.toString());
     addDestinationMarkers(LatLng(widget.dropLat, widget.dropLong));
     addPickupMarkers(LatLng(widget.pickUpLat, widget.pickUpLong));
+    getDriverData();
     locatePosition(context);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  dynamic data;
+  var trackStatus = '';
+
+  Future<dynamic> getDriverData() async {
+    FirebaseFirestore.instance
+        .collection("drivers")
+        .doc(widget.driverID)
+        .get()
+        .then((value) {
+      if (mounted) {
+        setState(() {
+          trackStatus = value['trackStatus'];
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffE5E5E5),
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Color(0xffCE1A17)),
-        backgroundColor: const Color(0xffE5E5E5),
-        elevation: 0.0,
-        actions: [
-          const Icon(
-            Icons.notifications,
-            // color: Color(0xffCE1A17),
-          ),
-          CustomWidget.widthSizedBoxWidget(10.w),
-        ],
-      ),
-      drawer: Drawer(),
-      body: Container(
-        padding: EdgeInsets.only(left: 16.w, right: 16.w),
-        child: Column(
-          children: [
-            CustomWidget.heightSizedBoxWidget(20.h),
-            Container(
-              height: 374.h,
-              width: 343.w,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.r),
-                color: Colors.black,
-              ),
-              child: GoogleMap(
-                initialCameraPosition:
-                    CameraPosition(target: _initialcameraposition),
-                mapType: MapType.normal,
-                onMapCreated: _onMapCreated,
-                myLocationEnabled: false,
-                markers: markers,
-                polylines: _polyline,
-              ),
+      // appBar: customAppBar(context, "Tracking"),
+      body: SafeArea(
+        child: Stack(
+          children: <Widget>[
+            GoogleMap(
+              initialCameraPosition:
+                  CameraPosition(target: _initialcameraposition),
+              mapType: MapType.normal,
+              onMapCreated: _onMapCreated,
+              myLocationEnabled: false,
+              markers: markers,
+              polylines: _polyline,
             ),
-            CustomWidget.heightSizedBoxWidget(20.h),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: CustomWidget.textWidget('Destination', 'Encode Sans',
-                  18.sp, FontWeight.w600, 0xff000000),
-            ),
-            CustomWidget.heightSizedBoxWidget(10.h),
-            textFormField('Driver’s current loaction', location, true,
-                0xff606060, 12.sp, FontWeight.w400, 0xffAEAEB2),
-            CustomWidget.heightSizedBoxWidget(40.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                richTextWidget(location, 'Distance', '11 km'),
-                richTextWidget(m1, 'Fare', '30'),
-                richTextWidget(history, 'Estimate time', '20 min'),
-              ],
-            ),
-            CustomWidget.heightSizedBoxWidget(20.h),
-            CustomWidget.customButtonWithoutArrowWidget(
-                context, '/paymentMethod', 'Start'),
+            // bottomDistanceCancelBtn(context, rideTime, ridedistance),
           ],
         ),
       ),
-    );
-  }
-
-  Widget textFormField(String hinttext, String prefixicon, bool keyBordType,
-      hinttextcolor, hinttextsize, hinttextFontWeight, borderColor) {
-    return Container(
-      height: 56.h,
-      // width: 323.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: Color(borderColor), width: 1),
-      ),
-      padding: EdgeInsets.all(1.h),
-      child: Center(
-        child: TextFormField(
-          // controller: myController,
-          textInputAction: TextInputAction.next,
-          keyboardType: keyBordType == true
-              ? TextInputType.number
-              : TextInputType.emailAddress,
-          // // obscureText: password == true ? obscureText : false,
-          // cursorColor:
-          //     white == true ? AppColors.customWhite : AppColors.customBlack,
-          // cursorWidth: 2.0,
-          // cursorHeight: AppSizes.dynamicHeight(context, .03),
-          style: TextStyle(
-            color: const Color(0xff606060),
-            fontSize: 12.sp,
-            fontFamily: 'Encode Sans',
-            fontWeight: FontWeight.w400,
-          ),
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: hinttext,
-            prefixIcon: Image(image: AssetImage(prefixicon)),
-            hintStyle: TextStyle(
-              color: Color(hinttextcolor),
-              fontSize: hinttextsize,
-              fontFamily: 'Encode Sans',
-              fontWeight: hinttextFontWeight,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget richTextWidget(
-    String img,
-    String text1,
-    String text2,
-  ) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomWidget.textWidget(
-            text1, 'Encode Sans', 14.sp, FontWeight.w600, 0xff2B2B2B),
-        CustomWidget.heightSizedBoxWidget(8.h),
-        RichText(
-          text: TextSpan(
-            children: [
-              WidgetSpan(
-                child: Image(
-                  image: AssetImage(img),
-                ),
-              ),
-              TextSpan(
-                  text: text2,
-                  style: TextStyle(
-                    color: Color(0xff2B2B2B),
-                    fontFamily: 'Encode Sans',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16.sp,
-                  ))
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -258,6 +163,12 @@ class _RideStartState extends State<RideStart> {
           new CameraPosition(target: liveLocation, zoom: 17);
       _mapController
           .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      // Update data in DB
+      MapServices.updateLocationInDB(
+        widget.driverID,
+        position.latitude,
+        position.longitude,
+      );
 
       setState(() async {
         markers.removeWhere((marker) => marker.markerId.value == 'driver');
@@ -279,7 +190,7 @@ class _RideStartState extends State<RideStart> {
     print("String Polyline..............................");
 
     PolylineResult result = await _polylinePoints.getRouteBetweenCoordinates(
-        mapKey,
+        "map key",
         PointLatLng(startLat, startLong),
         PointLatLng(destiLat, pickUpLong));
     log(result.errorMessage.toString());
@@ -292,7 +203,7 @@ class _RideStartState extends State<RideStart> {
         _polyline.add(Polyline(
             width: 4,
             polylineId: PolylineId('polyline'),
-            color: Colors.red,
+            color: Colors.orange,
             points: _polylineCoordinates));
       });
     } else {
