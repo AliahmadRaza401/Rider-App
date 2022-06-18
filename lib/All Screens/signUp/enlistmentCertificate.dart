@@ -7,7 +7,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ride_star/Provider/authenticationProvider.dart';
-import 'package:ride_star/Services/firebase_helper.dart';
 import 'package:ride_star/Services/imagPicker.dart';
 
 import '../../Custom Widgets/customWidgets.dart';
@@ -21,15 +20,18 @@ class EnlistmentCertificate extends StatefulWidget {
 }
 
 class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
+  bool loading = false;
+  
+  UserProfileProvider userProfileProvider = UserProfileProvider();
   final formKey = GlobalKey<FormState>();
   PlatformFile? card1;
   TextEditingController enlistmentNumberController = TextEditingController();
-  late UserProfileProvider userProfileProvider;
+  //  UserProfileProvider userProfileProvider = UserProfileProvider();
 
   @override
   void initState() {
-    userProfileProvider =
-        Provider.of<UserProfileProvider>(context, listen: false);
+    // userProfileProvider =
+    //     Provider.of<UserProfileProvider>(context, listen: false);
     super.initState();
   }
 
@@ -85,7 +87,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
 
   @override
   Widget build(BuildContext context) {
-    bool loading = Provider.of<UserProfileProvider>(context).loading;
+    // bool loading = Provider.of<UserProfileProvider>(context).loading;
     return Scaffold(
       appBar: CustomWidget.setAppBar(
         context,

@@ -35,8 +35,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
   @override
   void initState() {
     super.initState();
-    userProfileProvider =
-        Provider.of<UserProfileProvider>(context, listen: false);
+    // userProfileProvider =
+    //     Provider.of<UserProfileProvider>(context, listen: false);
   }
 
   @override
