@@ -324,7 +324,7 @@ class _NationaIDCardScreenState extends State<NationaIDCardScreen> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
-         padding: EdgeInsets.all(1.h),
+      padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           controller: controllerName,

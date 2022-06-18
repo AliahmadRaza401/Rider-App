@@ -33,7 +33,7 @@ class MapServices {
   }
 
   static Future<Uint8List> getMarkerWithSize2(int width) async {
-    ByteData data = await rootBundle.load("assets/images/a.png");
+    ByteData data = await rootBundle.load("assets/images/b.png");
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
         targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();

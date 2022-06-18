@@ -64,10 +64,10 @@ class Routes {
       //   return MaterialPageRoute(
       //     builder: (context) => RideStart(),
       //   );
-      case paymentMethod:
-        return MaterialPageRoute(
-          builder: (context) => const PaymentMethod(),
-        );
+      // case paymentMethod:
+      //   return MaterialPageRoute(
+      //     builder: (context) => const PaymentMethod(),
+      //   );
       case enterMobileNumber2:
         return MaterialPageRoute(
           builder: (context) => const EnterMobileNumber2(),

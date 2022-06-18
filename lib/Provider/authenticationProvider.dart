@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ride_star/All%20Screens/Login%20Folder/logIn.dart';
 import 'package:ride_star/Routes/routes.dart';
+import 'package:ride_star/Services/app_route.dart';
 import 'package:ride_star/Services/firebase_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -31,6 +33,10 @@ class UserProfileProvider with ChangeNotifier {
     loading = value;
     notifyListeners();
   }
+
+
+
+  
 
   void postDetailsToFirestore(BuildContext context) async {
     try {
@@ -78,11 +84,12 @@ class UserProfileProvider with ChangeNotifier {
         'enlistCertiPick': enlistCertiPick,
         'enlistCertiNo': enlistmentCertificateNumber,
         'enlistCertiExpDate': enlistmentCertificateExpiryDate,
-        'createAt': DateTime.now(),
+       
       }).then((value) {
         setLoading(false);
         ToastUtils.showCustomToast(context, "SignUp Success", Colors.green);
-        Navigator.pushReplacementNamed(context, Routes.enterMobileNumber);
+        // Navigator.pushReplacementNamed(context, Routes.enterMobileNumber);
+        AppRoutes.push(context, const LogInScreen());
       }).catchError((e) {
         setLoading(false);
         ToastUtils.showCustomToast(

@@ -183,7 +183,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
             ),
             CustomWidget.heightSizedBoxWidget(90.h),
             loading == true
-                ? CircularProgressIndicator(
+                ? const CircularProgressIndicator(
                     color: Colors.red,
                   )
                 : InkWell(
@@ -296,7 +296,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
-         padding: EdgeInsets.all(1.h),
+      padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           controller: controllerName,

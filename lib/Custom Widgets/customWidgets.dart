@@ -71,11 +71,14 @@ class CustomWidget {
   ) {
     return Text(
       text,
+      maxLines: 6,
       style: TextStyle(
+        
         fontFamily: fontfamily == '' ? 'Encode Sans' : fontfamily,
         color: Color(textcolor),
         fontSize: fontSize,
         fontWeight: fontWeignt,
+        
       ),
     );
   }

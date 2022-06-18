@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -33,13 +34,13 @@ class _HomeState extends State<Home> {
   final Set<Marker> markers = new Set();
   var driverCurrentLoaction;
   var diveraddress;
-  var drivercurrentlat;
-  var drivercurrentlong;
+  double? drivercurrentlat;
+  double? drivercurrentlong;
 
   var destinationLoaction;
   var destinationaddress;
-  var destinationcurrentlat;
-  var destinationcurrentlong;
+  double? destinationcurrentlat;
+  double? destinationcurrentlong;
 
   String tripfear = '';
   String prise = '';
@@ -81,13 +82,15 @@ class _HomeState extends State<Home> {
       print("Location is Off =======================>>");
     } else {
       print("Location is ON =======================>>");
+      // Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+          desiredAccuracy: LocationAccuracy.medium);
+      print('position: $position');
       var currentPosition = position;
       currentLaltg = LatLng(position.latitude, position.longitude);
-      // addmarkers(latLatPosition);
+      print('currentLaltg: $currentLaltg');
       CameraPosition cameraPosition =
-          new CameraPosition(target: currentLaltg, zoom: 14);
+          CameraPosition(target: currentLaltg, zoom: 14);
       myController!
           .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
       addmarkers(currentLaltg);
@@ -183,7 +186,8 @@ class _HomeState extends State<Home> {
                           searchingText: "Please wait ...",
                           selectText: "Select place",
                           outsideOfPickAreaText: "Place not in area",
-                          initialPosition: currentLaltg,
+                          initialPosition:
+                              currentLaltg == null ? _center : currentLaltg,
                           useCurrentLocation: true,
                           selectInitialPosition: true,
                           usePinPointingSearch: true,
@@ -203,87 +207,150 @@ class _HomeState extends State<Home> {
 
                               drivercurrentlat =
                                   driverCurrentLoaction.geometry!.location.lat;
-                              drivercurrentlong = driverCurrentLoaction
-                                  .geometry!.location.lng
-                                  .toString();
+                              drivercurrentlong =
+                                  driverCurrentLoaction.geometry!.location.lng;
                             });
                           })),
                 );
               },
               child: diveraddress == null
                   ? CustomWidget.textWidgetWithBorder(
-                      'Driver’s current loaction')
-                  : CustomWidget.textWidgetWithBorder(
-                      driverCurrentLoaction!.formattedAddress,
+                      'Driver’s current loaction',
+                    )
+                  : Container(
+                      width: 323.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.r),
+                        border: Border.all(
+                          color: const Color(0xff606060),
+                          width: 1,
+                        ),
+                      ),
+                      padding: EdgeInsets.only(
+                        top: 5.h,
+                        bottom: 5.h,
+                        left: 4.w,
+                        right: 4.w,
+                      ),
+                      child: Row(
+                        children: [
+                          const Image(image: AssetImage(location)),
+                          CustomWidget.widthSizedBoxWidget(15.0),
+                          Flexible(
+                            child: Text(
+                              driverCurrentLoaction!.formattedAddress,
+                              style: const TextStyle(
+                                  fontFamily: 'Encode Sans',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(
+                                    0xff606060,
+                                  )),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
             ),
             CustomWidget.heightSizedBoxWidget(21.h),
             InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PlacePicker(
-                          apiKey: mapKey,
-                          hintText: "Find a place ...",
-                          searchingText: "Please wait ...",
-                          selectText: "Select place",
-                          outsideOfPickAreaText: "Place not in area",
-                          initialPosition: currentLaltg,
-                          useCurrentLocation: true,
-                          selectInitialPosition: true,
-                          usePinPointingSearch: true,
-                          usePlaceDetailSearch: true,
-                          onPlacePicked: (result) {
-                            destinationLoaction = result;
-                            Navigator.of(context).pop();
-                            setState(() {
-                              print(destinationLoaction.formattedAddress);
-                              print(destinationLoaction.geometry!.location.lat);
-                              print(destinationLoaction.geometry!.location.lng
-                                  .toString());
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PlacePicker(
+                            apiKey: mapKey,
+                            hintText: "Find a place ...",
+                            searchingText: "Please wait ...",
+                            selectText: "Select place",
+                            outsideOfPickAreaText: "Place not in area",
+                            initialPosition:
+                                currentLaltg == null ? _center : currentLaltg,
+                            useCurrentLocation: true,
+                            selectInitialPosition: true,
+                            usePinPointingSearch: true,
+                            usePlaceDetailSearch: true,
+                            onPlacePicked: (result) {
+                              destinationLoaction = result;
+                              Navigator.of(context).pop();
+                              setState(() {
+                                // print(destinationLoaction.formattedAddress);
+                                // print(destinationLoaction.geometry!.location.lat);
+                                // print(destinationLoaction.geometry!.location.lng
+                                //     .toString());
 
-                              destinationaddress =
-                                  destinationLoaction.formattedAddress;
+                                destinationaddress =
+                                    destinationLoaction.formattedAddress;
 
-                              destinationcurrentlat =
-                                  destinationLoaction.geometry!.location.lat;
-                              destinationcurrentlong = destinationLoaction
-                                  .geometry!.location.lng
-                                  .toString();
-                            });
-                          })),
-                );
-              },
-              child: destinationaddress == null
-                  ? CustomWidget.textWidgetWithBorder('Destination')
-                  : CustomWidget.textWidgetWithBorder(
-                      destinationLoaction!.formattedAddress,
-                    ),
-            ),
+                                destinationcurrentlat =
+                                    destinationLoaction.geometry!.location.lat;
+                                destinationcurrentlong =
+                                    destinationLoaction.geometry!.location.lng;
+                              });
+                            })),
+                  );
+                },
+                child: destinationaddress == null
+                    ? CustomWidget.textWidgetWithBorder('Destination')
+                    : Container(
+                        width: 323.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(
+                            color: const Color(0xff606060),
+                            width: 1,
+                          ),
+                        ),
+                        padding: EdgeInsets.only(
+                          top: 5.h,
+                          bottom: 5.h,
+                          left: 4.w,
+                          right: 4.w,
+                        ),
+                        child: Row(
+                          children: [
+                            const Image(image: AssetImage(location)),
+                            CustomWidget.widthSizedBoxWidget(15.0),
+                            Flexible(
+                              child: Text(
+                                destinationLoaction!.formattedAddress,
+                                style: const TextStyle(
+                                    fontFamily: 'Encode Sans',
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(
+                                      0xff606060,
+                                    )),
+                              ),
+                            )
+                          ],
+                        ),
+                      )),
             CustomWidget.heightSizedBoxWidget(21.h),
             fearWidgetContainer(),
-            // checktextFormField('Fare', m1, true, 0xff606060, 12.sp,
-            //     FontWeight.w400, 0xffAEAEB2),
             CustomWidget.heightSizedBoxWidget(41.h),
-            // CustomWidget.customButtonWidget(
-            //     context, '/enterMobileNumber', 'Next  ')
             InkWell(
               onTap: () {
+                print("0");
                 if (diveraddress == null) {
+                  print("1");
                   ToastUtils.showCustomToast(context,
                       'Driver’s current loaction is Missing', Colors.red);
                 } else if (destinationaddress == null) {
+                  print("2");
                   ToastUtils.showCustomToast(
                       context, 'Destination loaction is Missing', Colors.red);
                 } else {
+                  print("sdfg");
                   AppRoutes.push(
                       context,
                       RideStart(
-                          pickUpLat: drivercurrentlat,
-                          pickUpLong: drivercurrentlong,
-                          dropLat: destinationcurrentlat,
-                          dropLong: destinationcurrentlong));
+                        pickUpLat: drivercurrentlat!,
+                        pickUpLong: drivercurrentlong!,
+                        dropLat: destinationcurrentlat!,
+                        dropLong: destinationcurrentlong!,
+                        destinationString:
+                            destinationLoaction!.formattedAddress,
+                            ischeck: checkStatus,
+                      ));
                 }
               },
               child: Container(
@@ -460,6 +527,12 @@ class _HomeState extends State<Home> {
             Expanded(child: Container()),
             InkWell(
               onTap: () {
+                // CameraPosition cameraPosition = CameraPosition(
+                //     target: LatLng(31.520370, 74.358749), zoom: 14);
+                // myController!.animateCamera(
+                //     CameraUpdate.newCameraPosition(cameraPosition));
+                // addmarkers(LatLng(31.520370, 74.358749));
+                locatePosition();
                 setState(() {
                   checkStatus = !checkStatus;
                 });
@@ -487,5 +560,17 @@ class _HomeState extends State<Home> {
             ),
           ],
         ));
+  }
+
+  @override
+  void dispose() {
+    _disposeController();
+    super.dispose();
+  }
+
+  Future<void> _disposeController() async {
+    final GoogleMapController controller = await myController!;
+    controller.dispose();
+    super.dispose();
   }
 }
