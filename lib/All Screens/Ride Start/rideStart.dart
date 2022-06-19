@@ -234,6 +234,7 @@ class _RideStartState extends State<RideStart> {
                       ],
                     )),
               ),
+                CustomWidget.heightSizedBoxWidget(20.h),
             ],
           ),
         ),
@@ -377,7 +378,7 @@ class _RideStartState extends State<RideStart> {
             calculateHarvesineDistanceInKM(pickupLatlng, distination);
         rideTime = calculateETAInMinutes(ridedistance, 30);
         log('ridedistance: $ridedistance');
-        if (ridedistance == 0 || ridedistance < 0.7633422577012097) {
+        if (ridedistance == 0 || ridedistance <0.7633422577012097) {
           log('Distance Complete');
           ToastUtils.showCustomToast(context, "Reached", Colors.green);
           geoLocatorListiner.cancel();

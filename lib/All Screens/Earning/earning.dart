@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ride_star/Images/images.dart';
+import 'package:ride_star/Provider/userProvider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Custom Widgets/customWidgets.dart';
 
@@ -12,6 +15,66 @@ class Earning extends StatefulWidget {
 }
 
 class _EarningState extends State<Earning> {
+  var totalEarning = 0.0;
+  var todayTrip = 0;
+  var todayEarning = 0.0;
+  var totalTrip = 0;
+  var totalDuo = 0;
+  var commissionRate = 0;
+
+  @override
+  void initState() {
+    checkUserDetails();
+    super.initState();
+  }
+
+  checkUserDetails() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var id = preferences.getString('uid');
+    print('id: $id');
+
+    final date2 = DateTime.now();
+    print(date2);
+    print('checkUser________________________________________!');
+    FirebaseFirestore.instance.collection("trip").get().then((querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        print('1');
+        final finaldate = doc['createAt'].toDate();
+        print('2');
+        //        var totalEarning = 0.0;
+        // var todayTrip = 0;
+        // var todayEarning = 0.0;
+        // var totalTrip = 0;
+        // var totalDuo = 0;
+        // var commissionRate = 0;
+        final difference = date2.difference(finaldate).inDays;
+        print('difference  =  ' + difference.toString());
+        print('docId = ' + doc['userId'].toString());
+
+        if (doc['userId'].toString() == id.toString()) {
+          print('id: $id');
+          setState(() {
+            totalEarning = totalEarning + doc['totalPayment'];
+            print('todayEarning: $todayEarning');
+            totalTrip = totalTrip + 1;
+            print('todayTrip: $todayTrip');
+          });
+
+          if (difference <= 0) {
+            setState(() {
+              todayEarning = todayEarning + doc['totalPayment'];
+              print('todayEarning: $todayEarning');
+              todayTrip = todayTrip + 1;
+              print('todayTrip: $todayTrip');
+            });
+          }
+        }
+
+        print('total Trip = ' + todayEarning.toString());
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,21 +87,26 @@ class _EarningState extends State<Earning> {
           children: [
             CustomWidget.heightSizedBoxWidget(40.h),
             Container(
-              height: 500.h,
+              height: MediaQuery.of(context).size.height * 0.8,
               child: GridView(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 10.w,
                     mainAxisSpacing: 10.h),
                 children: [
-                  singleContainerWidget(moneyblue, 'Today Earnings', '৳ 500'),
-                  singleContainerWidget(routeblue, 'Today Trips', '8'),
-                  singleContainerWidget(moneyreed, 'Total Earnings', '৳ 50000'),
-                  singleContainerWidget(routegreen, 'Total Trips', '80'),
-                  singleContainerWidget(totalduo, 'Total Due', '৳ 50000'),
-                  singleContainerWidget(persant, 'Commision Rate', '100%'),
+                  singleContainerWidget(
+                      moneyblue, 'Today Earnings', totalEarning.toStringAsFixed(2)),
+                  singleContainerWidget(
+                      routeblue, 'Today Trips', todayTrip.toString()),
+                  singleContainerWidget(
+                      moneyreed, 'Total Earnings', totalEarning.toStringAsFixed(2)),
+                  singleContainerWidget(
+                      routegreen, 'Total Trips', totalTrip.toString()),
+                  singleContainerWidget(
+                      totalduo, 'Total Due', totalDuo.toString()),
+                  singleContainerWidget(
+                      persant, 'Commision Rate', commissionRate.toString()),
                 ],
-
               ),
             )
           ],

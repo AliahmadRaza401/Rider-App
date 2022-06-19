@@ -2,18 +2,24 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:ride_star/All%20Screens/Earning/earning.dart';
+import 'package:ride_star/All%20Screens/Login%20Folder/logIn.dart';
 import 'package:ride_star/All%20Screens/Ride%20Start/rideStart.dart';
 import 'package:ride_star/All%20Screens/map/map_services.dart';
 import 'package:ride_star/Custom%20Widgets/customWidgets.dart';
 import 'package:ride_star/Provider/authenticationProvider.dart';
+import 'package:ride_star/Provider/userProvider.dart';
 import 'package:ride_star/Services/app_route.dart';
 import 'package:ride_star/Utils/custom_toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Images/images.dart';
 import '../../Provider/tripProvider.dart';
@@ -27,6 +33,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final Uri url1 = Uri.parse('https://www.facebook.com/');
+  final Uri url2 = Uri.parse('https://www.instagram.com/accounts/login/');
+  String userImage = '';
+  String userName = '';
+  String userNumber = '';
+
   bool checkStatus = false;
   TripProvider driverTripProvider = TripProvider();
   final Set<Marker> _markers = {};
@@ -67,10 +79,39 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    checkUserExist();
     locatePosition();
     // driverTripProvider = Provider.of<TripProvider>(context, listen: false);
     // _loadMapStyles();
     super.initState();
+  }
+
+  void _launchUrl(_url) async {
+    if (!await launchUrl(_url)) throw 'Could not launch $_url';
+  }
+
+  checkUserExist() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var id = preferences.getString('uid');
+    print('id: $id');
+    print('checkUser________________________________________!');
+    FirebaseFirestore.instance.collection("users").get().then((querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        if (doc['uid'].toString() == id.toString()) {
+          print('doc Id : ${doc['uid']}');
+          print('yes');
+          setState(() {
+            userImage = doc['userPic'].toString();
+            print('userImage: $userImage');
+
+            userName = doc['userName'].toString();
+            print('userName: $userName');
+            userNumber = doc['userMobile'].toString();
+            print('userNumber: $userNumber');
+          });
+        }
+      });
+    });
   }
 
   locatePosition() async {
@@ -133,126 +174,257 @@ class _HomeState extends State<Home> {
           CustomWidget.widthSizedBoxWidget(10.w),
         ],
       ),
-      drawer: Drawer(),
-      body: Container(
-        padding: EdgeInsets.only(
-          left: 16.w,
-          right: 16.w,
-        ),
+      drawer: Drawer(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            CustomWidget.heightSizedBoxWidget(20.h),
             Container(
-              height: 350.h,
-              width: 343.w,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.r),
-                color: Colors.black,
-              ),
-              child: GoogleMap(
-                mapType: MapType.terrain,
-                rotateGesturesEnabled: true,
-                zoomGesturesEnabled: true,
-                trafficEnabled: false,
-                tiltGesturesEnabled: false,
-                scrollGesturesEnabled: true,
-                compassEnabled: true,
-                myLocationButtonEnabled: true,
-                zoomControlsEnabled: false,
-                mapToolbarEnabled: false,
-                markers: markers,
-                initialCameraPosition: CameraPosition(
-                  target: initialLatLng,
-                  zoom: 14.47,
-                ),
-                onMapCreated: (GoogleMapController controller) {
-                  myController = controller;
-                  _controller.complete(controller);
-                  // _setMapPins([LatLng(30.029585, 31.022356)]);
-                  // _setMapStyle();
-                  // _addPolyLines();
-                },
-              ),
-            ),
-            CustomWidget.heightSizedBoxWidget(21.h),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PlacePicker(
-                          apiKey: mapKey,
-                          hintText: "Find a place ...",
-                          searchingText: "Please wait ...",
-                          selectText: "Select place",
-                          outsideOfPickAreaText: "Place not in area",
-                          initialPosition:
-                              currentLaltg == null ? _center : currentLaltg,
-                          useCurrentLocation: true,
-                          selectInitialPosition: true,
-                          usePinPointingSearch: true,
-                          usePlaceDetailSearch: true,
-                          onPlacePicked: (result) {
-                            driverCurrentLoaction = result;
-                            Navigator.of(context).pop();
-                            setState(() {
-                              print(driverCurrentLoaction.formattedAddress);
-                              print(
-                                  driverCurrentLoaction.geometry!.location.lat);
-                              print(driverCurrentLoaction.geometry!.location.lng
-                                  .toString());
-
-                              diveraddress =
-                                  driverCurrentLoaction.formattedAddress;
-
-                              drivercurrentlat =
-                                  driverCurrentLoaction.geometry!.location.lat;
-                              drivercurrentlong =
-                                  driverCurrentLoaction.geometry!.location.lng;
-                            });
-                          })),
-                );
-              },
-              child: diveraddress == null
-                  ? CustomWidget.textWidgetWithBorder(
-                      'Driver’s current loaction',
-                    )
-                  : Container(
-                      width: 323.w,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.r),
-                        border: Border.all(
-                          color: const Color(0xff606060),
-                          width: 1,
+              alignment: Alignment.center,
+              // height: 200,
+              child: DrawerHeader(
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                // decoration: BoxDecoration(color: Colors.blue),
+                child: ListTile(
+                  title: userName.isEmpty
+                      ? CustomWidget.textWidget(
+                          'User Name',
+                          'Encode Sans',
+                          16.sp,
+                          FontWeight.w600,
+                          0xff2B2B2B,
+                        )
+                      : CustomWidget.textWidget(
+                          userName,
+                          'Encode Sans',
+                          16.sp,
+                          FontWeight.w600,
+                          0xff2B2B2B,
                         ),
-                      ),
-                      padding: EdgeInsets.only(
-                        top: 5.h,
-                        bottom: 5.h,
-                        left: 4.w,
-                        right: 4.w,
-                      ),
-                      child: Row(
-                        children: [
-                          const Image(image: AssetImage(location)),
-                          CustomWidget.widthSizedBoxWidget(15.0),
-                          Flexible(
-                            child: Text(
-                              driverCurrentLoaction!.formattedAddress,
-                              style: const TextStyle(
-                                  fontFamily: 'Encode Sans',
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(
-                                    0xff606060,
-                                  )),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                  subtitle: userNumber.isEmpty
+                      ? CustomWidget.textWidget(
+                          'XXX-XXX-XXXX',
+                          'Encode Sans',
+                          16.sp,
+                          FontWeight.w600,
+                          0xff2B2B2B,
+                        )
+                      : CustomWidget.textWidget(
+                          userNumber,
+                          'Encode Sans',
+                          16.sp,
+                          FontWeight.w600,
+                          0xff2B2B2B,
+                        ),
+                  leading: FadeInImage.assetNetwork(
+                    placeholder: userprofile,
+                    image: userImage,
+                  ),
+                ),
+
+                // child: Text(
+                //   'Right Drawer Header',
+                //   style: TextStyle(color: Colors.white, fontSize: 24),
+                // ),
+              ),
             ),
-            CustomWidget.heightSizedBoxWidget(21.h),
-            InkWell(
+            Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  ListTile(
+                    onTap: () {
+                      // AppRoutes.push(context, const Earning());
+                    },
+                    leading: const Image(
+                      image: AssetImage(historyicon),
+                    ),
+                    title: CustomWidget.textWidget(
+                      'Ride History',
+                      'Encode Sans',
+                      16.sp,
+                      FontWeight.w600,
+                      0xff2B2B2B,
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Color(0xffCE1A17),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      AppRoutes.push(context, const Earning());
+                    },
+                    leading: const Image(
+                      image: AssetImage(earningsmall),
+                    ),
+                    title: CustomWidget.textWidget(
+                      'Earnings',
+                      'Encode Sans',
+                      16.sp,
+                      FontWeight.w600,
+                      0xff2B2B2B,
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Color(0xffCE1A17),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      // AppRoutes.push(context, const Earning());
+                    },
+                    leading: const Image(
+                      image: AssetImage(earningsmall),
+                    ),
+                    title: CustomWidget.textWidget(
+                      'How To Use',
+                      'Encode Sans',
+                      16.sp,
+                      FontWeight.w600,
+                      0xff2B2B2B,
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Color(0xffCE1A17),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {},
+                    leading: const Image(
+                      image: AssetImage(earningsmall),
+                    ),
+                    title: CustomWidget.textWidget(
+                      'Privacy Policy',
+                      'Encode Sans',
+                      16.sp,
+                      FontWeight.w600,
+                      0xff2B2B2B,
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Color(0xffCE1A17),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () async {
+                      print('a');
+                      SharedPreferences preferences =
+                          await SharedPreferences.getInstance();
+                      setState(() {
+                        print('b');
+                        preferences.remove('uid');
+                        print('c');
+                        AppRoutes.replace(context, const LogInScreen());
+                      });
+                    },
+                    leading: const Icon(
+                      Icons.logout,
+                      color: Color(0xffCE1A17),
+                    ),
+                    title: CustomWidget.textWidget(
+                      'Logot',
+                      'Encode Sans',
+                      16.sp,
+                      FontWeight.w600,
+                      0xff2B2B2B,
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Color(0xffCE1A17),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.2,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 20.w, bottom: 25.h),
+                    child: Row(
+                      children: [
+                        const Image(image: AssetImage(shearwithyourFriends)),
+                        SizedBox(
+                          width: 20.w,
+                        ),
+                        CustomWidget.textWidget(
+                          'Share with your friends',
+                          'Encode Sans',
+                          16.sp,
+                          FontWeight.w600,
+                          0xff2B2B2B,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                          onTap: () {
+                            _launchUrl(url1);
+                          },
+                          child: const Image(image: AssetImage(fbook))),
+                      SizedBox(
+                        width: 20.w,
+                      ),
+                      InkWell(
+                          onTap: () {
+                            _launchUrl(url2);
+                          },
+                          child: const Image(image: AssetImage(insta))),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+          ),
+          child: Column(
+            children: [
+              CustomWidget.heightSizedBoxWidget(20.h),
+              Container(
+                height: 350.h,
+                width: 343.w,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.r),
+                  color: Colors.black,
+                ),
+                child: GoogleMap(
+                  mapType: MapType.terrain,
+                  rotateGesturesEnabled: true,
+                  zoomGesturesEnabled: true,
+                  trafficEnabled: false,
+                  tiltGesturesEnabled: false,
+                  scrollGesturesEnabled: true,
+                  compassEnabled: true,
+                  myLocationButtonEnabled: true,
+                  zoomControlsEnabled: false,
+                  mapToolbarEnabled: false,
+                  markers: markers,
+                  initialCameraPosition: CameraPosition(
+                    target: initialLatLng,
+                    zoom: 14.47,
+                  ),
+                  onMapCreated: (GoogleMapController controller) {
+                    myController = controller;
+                    _controller.complete(controller);
+                    // _setMapPins([LatLng(30.029585, 31.022356)]);
+                    // _setMapStyle();
+                    // _addPolyLines();
+                  },
+                ),
+              ),
+              CustomWidget.heightSizedBoxWidget(21.h),
+              InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
@@ -270,27 +442,31 @@ class _HomeState extends State<Home> {
                             usePinPointingSearch: true,
                             usePlaceDetailSearch: true,
                             onPlacePicked: (result) {
-                              destinationLoaction = result;
+                              driverCurrentLoaction = result;
                               Navigator.of(context).pop();
                               setState(() {
-                                // print(destinationLoaction.formattedAddress);
-                                // print(destinationLoaction.geometry!.location.lat);
-                                // print(destinationLoaction.geometry!.location.lng
-                                //     .toString());
+                                print(driverCurrentLoaction.formattedAddress);
+                                print(driverCurrentLoaction
+                                    .geometry!.location.lat);
+                                print(driverCurrentLoaction
+                                    .geometry!.location.lng
+                                    .toString());
 
-                                destinationaddress =
-                                    destinationLoaction.formattedAddress;
+                                diveraddress =
+                                    driverCurrentLoaction.formattedAddress;
 
-                                destinationcurrentlat =
-                                    destinationLoaction.geometry!.location.lat;
-                                destinationcurrentlong =
-                                    destinationLoaction.geometry!.location.lng;
+                                drivercurrentlat = driverCurrentLoaction
+                                    .geometry!.location.lat;
+                                drivercurrentlong = driverCurrentLoaction
+                                    .geometry!.location.lng;
                               });
                             })),
                   );
                 },
-                child: destinationaddress == null
-                    ? CustomWidget.textWidgetWithBorder('Destination')
+                child: diveraddress == null
+                    ? CustomWidget.textWidgetWithBorder(
+                        'Customer current loaction',
+                      )
                     : Container(
                         width: 323.w,
                         decoration: BoxDecoration(
@@ -312,7 +488,7 @@ class _HomeState extends State<Home> {
                             CustomWidget.widthSizedBoxWidget(15.0),
                             Flexible(
                               child: Text(
-                                destinationLoaction!.formattedAddress,
+                                driverCurrentLoaction!.formattedAddress,
                                 style: const TextStyle(
                                     fontFamily: 'Encode Sans',
                                     fontWeight: FontWeight.w600,
@@ -323,70 +499,146 @@ class _HomeState extends State<Home> {
                             )
                           ],
                         ),
-                      )),
-            CustomWidget.heightSizedBoxWidget(21.h),
-            fearWidgetContainer(),
-            CustomWidget.heightSizedBoxWidget(41.h),
-            InkWell(
-              onTap: () {
-                print("0");
-                if (diveraddress == null) {
-                  print("1");
-                  ToastUtils.showCustomToast(context,
-                      'Driver’s current loaction is Missing', Colors.red);
-                } else if (destinationaddress == null) {
-                  print("2");
-                  ToastUtils.showCustomToast(
-                      context, 'Destination loaction is Missing', Colors.red);
-                } else {
-                  print("sdfg");
-                  AppRoutes.push(
+                      ),
+              ),
+              CustomWidget.heightSizedBoxWidget(21.h),
+              InkWell(
+                  onTap: () {
+                    Navigator.push(
                       context,
-                      RideStart(
-                        pickUpLat: drivercurrentlat!,
-                        pickUpLong: drivercurrentlong!,
-                        dropLat: destinationcurrentlat!,
-                        dropLong: destinationcurrentlong!,
-                        destinationString:
-                            destinationLoaction!.formattedAddress,
-                            ischeck: checkStatus,
-                      ));
-                }
-              },
-              child: Container(
-                  height: 56.h,
-                  width: 323.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.sp),
-                    // color: const Color(0xffCE1A17),
-                    boxShadow: const <BoxShadow>[
-                      BoxShadow(
-                        color: Color(0xffEAC4C7),
-                        blurRadius: 15.0,
-                        offset: Offset(0.0, 0.55),
-                      ),
-                    ],
-                    color: const Color(0xffCE1A17),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Next",
-                        style: TextStyle(
-                            color: const Color(0xffFFFFFF),
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: 'Encode Sans'),
-                      ),
-                      const Icon(
-                        Icons.arrow_forward,
-                        color: Color(0xffFFFFFF),
-                      )
-                    ],
-                  )),
-            ),
-          ],
+                      MaterialPageRoute(
+                          builder: (context) => PlacePicker(
+                              apiKey: mapKey,
+                              hintText: "Find a place ...",
+                              searchingText: "Please wait ...",
+                              selectText: "Select place",
+                              outsideOfPickAreaText: "Place not in area",
+                              initialPosition:
+                                  currentLaltg == null ? _center : currentLaltg,
+                              useCurrentLocation: true,
+                              selectInitialPosition: true,
+                              usePinPointingSearch: true,
+                              usePlaceDetailSearch: true,
+                              onPlacePicked: (result) {
+                                destinationLoaction = result;
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  // print(destinationLoaction.formattedAddress);
+                                  // print(destinationLoaction.geometry!.location.lat);
+                                  // print(destinationLoaction.geometry!.location.lng
+                                  //     .toString());
+
+                                  destinationaddress =
+                                      destinationLoaction.formattedAddress;
+
+                                  destinationcurrentlat = destinationLoaction
+                                      .geometry!.location.lat;
+                                  destinationcurrentlong = destinationLoaction
+                                      .geometry!.location.lng;
+                                });
+                              })),
+                    );
+                  },
+                  child: destinationaddress == null
+                      ? CustomWidget.textWidgetWithBorder('Destination')
+                      : Container(
+                          width: 323.w,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.r),
+                            border: Border.all(
+                              color: const Color(0xff606060),
+                              width: 1,
+                            ),
+                          ),
+                          padding: EdgeInsets.only(
+                            top: 5.h,
+                            bottom: 5.h,
+                            left: 4.w,
+                            right: 4.w,
+                          ),
+                          child: Row(
+                            children: [
+                              const Image(image: AssetImage(location)),
+                              CustomWidget.widthSizedBoxWidget(15.0),
+                              Flexible(
+                                child: Text(
+                                  destinationLoaction!.formattedAddress,
+                                  style: const TextStyle(
+                                      fontFamily: 'Encode Sans',
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(
+                                        0xff606060,
+                                      )),
+                                ),
+                              )
+                            ],
+                          ),
+                        )),
+              CustomWidget.heightSizedBoxWidget(21.h),
+              fearWidgetContainer(),
+              CustomWidget.heightSizedBoxWidget(41.h),
+              InkWell(
+                onTap: () {
+                  print("0");
+                  if (diveraddress == null) {
+                    print("1");
+                    ToastUtils.showCustomToast(context,
+                        'Customer  Loaction is Missing', Colors.red);
+                  } else if (destinationaddress == null) {
+                    print("2");
+                    ToastUtils.showCustomToast(
+                        context, 'Destination loaction is Missing', Colors.red);
+                  } else {
+                    print("sdfg");
+                    AppRoutes.push(
+                        context,
+                        RideStart(
+                          pickUpLat: drivercurrentlat!,
+                          pickUpLong: drivercurrentlong!,
+                          dropLat: destinationcurrentlat!,
+                          dropLong: destinationcurrentlong!,
+                          destinationString:
+                              destinationLoaction!.formattedAddress,
+                          ischeck: checkStatus,
+                        ));
+                  }
+                },
+                child: Container(
+                    height: 56.h,
+                    width: 323.w,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.sp),
+                      // color: const Color(0xffCE1A17),
+                      boxShadow: const <BoxShadow>[
+                        BoxShadow(
+                          color: Color(0xffEAC4C7),
+                          blurRadius: 15.0,
+                          offset: Offset(0.0, 0.55),
+                        ),
+                      ],
+                      color: const Color(0xffCE1A17),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Next",
+                          style: TextStyle(
+                              color: const Color(0xffFFFFFF),
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Encode Sans'),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward,
+                          color: Color(0xffFFFFFF),
+                        )
+                      ],
+                    )),
+              ),
+              CustomWidget.heightSizedBoxWidget(20.h),
+            ],
+          ),
         ),
       ),
     );

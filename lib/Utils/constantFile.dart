@@ -1,1 +1,3 @@
-const googleAPIKey = 'AIzaSyB6WZnTL-zVEM59xNwHhIC4BhwJQZLSedI';
+
+
+ const googleAPIKey = 'Repleace Your Own Key';

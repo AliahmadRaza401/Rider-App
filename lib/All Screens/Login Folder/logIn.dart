@@ -17,7 +17,6 @@ import '../../Custom Widgets/customWidgets.dart';
 import '../../Images/images.dart';
 import '../../Services/app_route.dart';
 import '../signUp/personal_Information.dart';
-import 'logInOtpScreen.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({Key? key}) : super(key: key);
@@ -109,17 +108,6 @@ class _LogInScreenState extends State<LogInScreen> {
                 isTimeOut2: false,
                 verifyId: verificationId.toString(),
               ));
-          // AppRoutes.push(
-          //   context,
-          //   ChatOtpScreen(
-          //       isTimeOut2: false,
-          //       phone: countryCode.toString() +
-          //           phone.text
-          //               .toString()
-          //               .replaceAll(RegExp(r'^0+(?=.)'), '')
-          //               .toString(),
-          //       verifyId: verificationId),
-          // );
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           if (mounted) {

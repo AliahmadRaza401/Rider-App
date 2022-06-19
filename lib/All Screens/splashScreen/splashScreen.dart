@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:ride_star/All%20Screens/Home/home.dart';
 import 'package:ride_star/All%20Screens/Login%20Folder/logIn.dart';
@@ -27,13 +28,15 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   startTime() async {
-    var duration = const Duration(seconds: 1);
+    var duration = const Duration(seconds: 3);
     return Timer(duration, route);
   }
 
   route() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var id = preferences.getString('uid');
+    print('id: $id');
+    
     if (id != null) {
       userProvider.getUserById(id);
       AppRoutes.replace(context, const Home());
@@ -48,14 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              image: AssetImage(userprofile),
-            ),
-          ),
-        ),
+        child: Lottie.asset(geofence, )
       ),
     );
   }
