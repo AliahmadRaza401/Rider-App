@@ -35,8 +35,8 @@ class _PersonalInformationState extends State<PersonalInformation> {
   @override
   void initState() {
     super.initState();
-    // userProfileProvider =
-    //     Provider.of<UserProfileProvider>(context, listen: false);
+    userProfileProvider =
+        Provider.of<UserProfileProvider>(context, listen: false);
   }
 
   @override
@@ -138,20 +138,25 @@ class _PersonalInformationState extends State<PersonalInformation> {
                   16.sp,
                   FontWeight.w700,
                   0xffce1a17,
-                  vehicleController,
+                  vehicleController..text = "Bike",
                 ),
                 CustomWidget.heightSizedBoxWidget(100.h),
                 InkWell(
                   onTap: () {
                     if (formKey.currentState!.validate() && _image != null) {
                       // print(_image!.path);
-                      userProfileProvider.personalPicture = _image;
-                      userProfileProvider.personalName =
-                          enterFullNameController.text;
-                      userProfileProvider.personalMobileNumber =
-                          enterMobileNumberController.text;
-                      userProfileProvider.personalVehicle =
-                          vehicleController.text;
+                      setState(() {
+                        userProfileProvider.personalPicture = _image;
+                        print(
+                            'userProfileProvider.personalPicture: ${userProfileProvider.personalPicture}');
+                        userProfileProvider.personalName =
+                            enterFullNameController.text;
+                        userProfileProvider.personalMobileNumber =
+                            enterMobileNumberController.text;
+                        userProfileProvider.personalVehicle =
+                            vehicleController.text;
+                      });
+
                       AppRoutes.push(context, NationaIDCardScreen());
                       // print(userProfileProvider.personalName);
                     }

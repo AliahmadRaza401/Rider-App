@@ -161,7 +161,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffE5E5E5),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color(0xffCE1A17)),
         backgroundColor: const Color(0xffE5E5E5),
@@ -335,11 +335,12 @@ class _HomeState extends State<Home> {
                       color: Color(0xffCE1A17),
                     ),
                   ),
-                  Expanded(
-                    child: Container(
+                  // Expanded(
+                  //   child: 
+                  Container(
                       height: MediaQuery.of(context).size.height * 0.2,
                     ),
-                  ),
+                  // ),
                   Padding(
                     padding: EdgeInsets.only(left: 20.w, bottom: 25.h),
                     child: Row(

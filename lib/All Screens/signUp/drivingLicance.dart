@@ -34,8 +34,8 @@ class _DrivingLicanceState extends State<DrivingLicance> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // userProfileProvider =
-    //     Provider.of<UserProfileProvider>(context, listen: false);
+    userProfileProvider =
+        Provider.of<UserProfileProvider>(context, listen: false);
   }
 
   DateTime? datepicker;
@@ -221,9 +221,13 @@ class _DrivingLicanceState extends State<DrivingLicance> {
                     _imagebackSide != null &&
                     selectedDate.isNotEmpty) {
                   userProfileProvider.drivingLicenseBackImg = _imagebackSide;
+                  print(
+                      'userProfileProvider.drivingLicenseBackImg: ${userProfileProvider.drivingLicenseBackImg}');
                   userProfileProvider.drivingLicenseExpiryDate =
                       selectedDate.toString();
                   userProfileProvider.drivingLicenseFrontImg = _imageFrondSide;
+                  print(
+                      'userProfileProvider.drivingLicenseFrontImg: ${userProfileProvider.drivingLicenseFrontImg}');
 
                   userProfileProvider.drivingLicenseNumber =
                       drivingLicanceCardNumberController.text;
@@ -316,7 +320,7 @@ class _DrivingLicanceState extends State<DrivingLicance> {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Color(borderColor), width: 1),
       ),
-         padding: EdgeInsets.all(1.h),
+      padding: EdgeInsets.all(1.h),
       child: Center(
         child: TextFormField(
           controller: controllerName,

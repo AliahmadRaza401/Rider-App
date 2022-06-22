@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
       userProvider.getUserById(id);
       AppRoutes.replace(context, const Home());
     } else {
-      AppRoutes.push(context, const LogInScreen());
+      AppRoutes.replace(context, const LogInScreen());
       // Navigator.pushNamed(context, '/personalInformation');
 
     }
@@ -50,8 +50,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
-        child: Lottie.asset(geofence, )
+        child: Image(image: AssetImage(logoimg))
       ),
     );
   }

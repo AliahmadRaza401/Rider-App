@@ -50,11 +50,6 @@ class _ConformOTPState extends State<ConformOTP> {
                 fontWeight: FontWeight.bold,
               ),
               length: 6,
-              // obscureText: true1234444,
-              // obscuringCharacter: '*',
-              // obscuringWidget: const FlutterLogo(
-              //   size: 24,
-              // ),
               blinkWhenObscuring: true,
               animationType: AnimationType.fade,
               validator: (v) {
@@ -74,8 +69,6 @@ class _ConformOTPState extends State<ConformOTP> {
               cursorColor: Colors.black,
               animationDuration: const Duration(milliseconds: 300),
               enableActiveFill: true,
-              // errorAnimationController: errorController,
-              // controller: textEditingController,
               keyboardType: TextInputType.number,
               boxShadows: const [
                 BoxShadow(
@@ -87,19 +80,11 @@ class _ConformOTPState extends State<ConformOTP> {
               onCompleted: (v) {
                 debugPrint("Completed");
               },
-              // onTap: () {
-              //   print("Pressed");
-              // },
               onChanged: (value) {
                 debugPrint(value);
-                // setState(() {
-                //   currentText = value;
-                // });
               },
               beforeTextPaste: (text) {
                 debugPrint("Allowing to paste $text");
-                //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-                //but you can show anything you want here, like your pop up saying wrong paste format or etc
                 return true;
               },
             ),
@@ -162,7 +147,6 @@ class _ConformOTPState extends State<ConformOTP> {
           width: 323.w,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.sp),
-            // color: const Color(0xffCE1A17),
             boxShadow: const <BoxShadow>[
               BoxShadow(
                 color: Color(0xffEAC4C7),

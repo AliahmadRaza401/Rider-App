@@ -51,7 +51,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
         LatLng(widget.pickUpLat, widget.dropLong), distination);
     rideTime = calculateETAInMinutes(ridedistance, 30);
     distance = ridedistance * 12.0;
-    time = rideTime * 0.30;
+    time = rideTime * 0.40;
     total = distance + time + checkedValue;
   }
 
@@ -90,7 +90,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 '(${ridedistance.toStringAsFixed(2)} km × 12)',
                 '৳ ${distance.toStringAsFixed(2)}'),
             CustomWidget.heightSizedBoxWidget(10.h),
-            rowWidget('Duration', '(${rideTime.toStringAsFixed(2)} min ×0.30)',
+            rowWidget('Duration', '(${rideTime.toStringAsFixed(2)} min ×0.40)',
                 '৳ ${time.toStringAsFixed(2)}'),
             CustomWidget.heightSizedBoxWidget(25.h),
             const DottedLine(

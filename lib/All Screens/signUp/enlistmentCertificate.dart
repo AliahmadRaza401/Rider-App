@@ -21,7 +21,7 @@ class EnlistmentCertificate extends StatefulWidget {
 
 class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
   bool loading = false;
-  
+
   UserProfileProvider userProfileProvider = UserProfileProvider();
   final formKey = GlobalKey<FormState>();
   PlatformFile? card1;
@@ -30,14 +30,14 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
 
   @override
   void initState() {
-    // userProfileProvider =
-    //     Provider.of<UserProfileProvider>(context, listen: false);
+    userProfileProvider =
+        Provider.of<UserProfileProvider>(context, listen: false);
     super.initState();
   }
 
   DateTime? datepicker;
   DateTime selectedDate1 = DateTime.now();
-  String selectedDate = '';
+  String selectedDate = 'Select Date';
   selectDate(
     BuildContext context,
     // StateSetter dropsetState,
@@ -87,7 +87,7 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
 
   @override
   Widget build(BuildContext context) {
-    // bool loading = Provider.of<UserProfileProvider>(context).loading;
+    bool loading = Provider.of<UserProfileProvider>(context).loading;
     return Scaffold(
       appBar: CustomWidget.setAppBar(
         context,
@@ -198,7 +198,21 @@ class _EnlistmentCertificateState extends State<EnlistmentCertificate> {
                         userProfileProvider.enlistmentCertificateExpiryDate =
                             selectedDate;
                         userProfileProvider.enlistmentCertificateImage = _image;
-
+                        print(
+                            ' userProfileProvider.enlistmentCertificateImage: ${userProfileProvider.enlistmentCertificateImage}');
+                        print(
+                            'personalPicture: ${userProfileProvider.personalPicture}');
+                        print(
+                            'nidFrontImg: ${userProfileProvider.nidFrontImg}');
+                        print(
+                            'nidFrontImg: ${userProfileProvider.nidFrontImg}');
+                        print('nidBackImg: ${userProfileProvider.nidBackImg}');
+                        print(
+                            'drivingLicenseFrontImg: ${userProfileProvider.drivingLicenseFrontImg}');
+                        print(
+                            'drivingLicenseBackImg: ${userProfileProvider.drivingLicenseBackImg}');
+                        print(
+                            'enlistmentCertificateImage: ${userProfileProvider.enlistmentCertificateImage}');
                         userProfileProvider.postDetailsToFirestore(context);
                         // Navigator.pushNamed(context, '/home');
                       } else {

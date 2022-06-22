@@ -28,3 +28,5 @@ const String geofence = "assets/images/geofence.json";
 const String shearwithyourFriends = "assets/images/shearwithyourFriends.png";
 const String insta = "assets/images/insta.png";
 const String fbook = "assets/images/fbook.png";
+const String logoimg = "assets/images/logo.jpeg";
+const String logoUpdated = "assets/images/logoUpdated.jpg";

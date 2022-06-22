@@ -6,9 +6,11 @@ import 'package:ride_star/All%20Screens/Login%20Folder/logIn.dart';
 import 'package:ride_star/Routes/routes.dart';
 import 'package:ride_star/Services/app_route.dart';
 import 'package:ride_star/Services/firebase_helper.dart';
+import 'package:ride_star/Services/shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
+import '../All Screens/Home/home.dart';
 import '../Utils/custom_toast.dart';
 
 class UserProfileProvider with ChangeNotifier {
@@ -89,7 +91,10 @@ class UserProfileProvider with ChangeNotifier {
         setLoading(false);
         ToastUtils.showCustomToast(context, "SignUp Success", Colors.green);
         // Navigator.pushReplacementNamed(context, Routes.enterMobileNumber);
-        AppRoutes.push(context, const LogInScreen());
+        // AppRoutes.push(context, const LogInScreen());
+            SharedPref.userLoggedIn(true);
+        SharedPref.saveUserId(FirebaseAuth.instance.currentUser!.uid.toString());
+        AppRoutes.push(context, Home());
       }).catchError((e) {
         setLoading(false);
         ToastUtils.showCustomToast(

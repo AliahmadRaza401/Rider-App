@@ -25,14 +25,13 @@ class RideStart extends StatefulWidget {
   String? destinationString;
   bool ischeck;
 
-  RideStart({
-    required this.pickUpLat,
-    required this.pickUpLong,
-    required this.dropLat,
-    required this.dropLong,
-    required this.destinationString,
-    required this.ischeck
-  });
+  RideStart(
+      {required this.pickUpLat,
+      required this.pickUpLong,
+      required this.dropLat,
+      required this.dropLong,
+      required this.destinationString,
+      required this.ischeck});
 
   @override
   State<RideStart> createState() => _RideStartState();
@@ -91,7 +90,8 @@ class _RideStartState extends State<RideStart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffE5E5E5),
+      // backgroundColor: const Color(0xffE5E5E5),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color(0xffCE1A17)),
         backgroundColor: const Color(0xffE5E5E5),
@@ -234,7 +234,7 @@ class _RideStartState extends State<RideStart> {
                       ],
                     )),
               ),
-                CustomWidget.heightSizedBoxWidget(20.h),
+              CustomWidget.heightSizedBoxWidget(20.h),
             ],
           ),
         ),
@@ -378,7 +378,7 @@ class _RideStartState extends State<RideStart> {
             calculateHarvesineDistanceInKM(pickupLatlng, distination);
         rideTime = calculateETAInMinutes(ridedistance, 30);
         log('ridedistance: $ridedistance');
-        if (ridedistance == 0 || ridedistance <0.7633422577012097) {
+        if (ridedistance == 0 || ridedistance < 0.7633422577012097) {
           log('Distance Complete');
           ToastUtils.showCustomToast(context, "Reached", Colors.green);
           geoLocatorListiner.cancel();
@@ -416,10 +416,11 @@ class _RideStartState extends State<RideStart> {
       });
       setState(() {
         _polyline.add(Polyline(
-            width: 4,
-            polylineId: PolylineId('polyline'),
-            color: Colors.red,
-            points: _polylineCoordinates));
+          width: 4,
+          polylineId: PolylineId('polyline'),
+          color: Colors.black,
+          points: _polylineCoordinates,
+        ));
       });
     } else {
       log("Polyline Not Generated!!!!!!!!!!!!!!!!");

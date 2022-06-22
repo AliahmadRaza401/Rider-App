@@ -78,7 +78,8 @@ class _EarningState extends State<Earning> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffE5E5E5),
+      // backgroundColor: const Color(0xffE5E5E5),
+      backgroundColor:Colors.white,
       appBar: CustomWidget.setAppBar(context, true, 'Earning', 0xff2B2B2B,
           FontWeight.w600, 'Encode Sans', 18.sp),
       body: Container(
