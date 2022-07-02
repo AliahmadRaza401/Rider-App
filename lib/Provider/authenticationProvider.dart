@@ -93,7 +93,11 @@ class UserProfileProvider with ChangeNotifier {
         // Navigator.pushReplacementNamed(context, Routes.enterMobileNumber);
         // AppRoutes.push(context, const LogInScreen());
             SharedPref.userLoggedIn(true);
-        SharedPref.saveUserId(FirebaseAuth.instance.currentUser!.uid.toString());
+          
+        // SharedPref.saveUserId(FirebaseAuth.instance.currentUser!.uid.toString());
+          // preferences.setString("uid", doc['uid']);
+          // userExist = true;
+          // userProvider.userModel = MyUserModel.fromMap(doc.data());
         AppRoutes.push(context, Home());
       }).catchError((e) {
         setLoading(false);

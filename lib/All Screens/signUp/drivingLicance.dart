@@ -43,7 +43,6 @@ class _DrivingLicanceState extends State<DrivingLicance> {
   String selectedDate = '';
   selectDate(
     BuildContext context,
-    // StateSetter dropsetState,
   ) async {
     final DateTime? selected = await showDatePicker(
       context: context,

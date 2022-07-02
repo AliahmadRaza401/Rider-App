@@ -25,6 +25,15 @@ import '../../Images/images.dart';
 import '../../Provider/tripProvider.dart';
 import '../ConstFile.dart';
 
+double? drivercurrentlat;
+double? drivercurrentlong;
+
+var destinationLoaction;
+var destinationaddress;
+double? destinationcurrentlat;
+double? destinationcurrentlong;
+bool checkStatus = false;
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -39,20 +48,12 @@ class _HomeState extends State<Home> {
   String userName = '';
   String userNumber = '';
 
-  bool checkStatus = false;
   TripProvider driverTripProvider = TripProvider();
   final Set<Marker> _markers = {};
   late LatLng currentLaltg;
   final Set<Marker> markers = new Set();
   var driverCurrentLoaction;
   var diveraddress;
-  double? drivercurrentlat;
-  double? drivercurrentlong;
-
-  var destinationLoaction;
-  var destinationaddress;
-  double? destinationcurrentlat;
-  double? destinationcurrentlong;
 
   String tripfear = '';
   String prise = '';
@@ -188,7 +189,7 @@ class _HomeState extends State<Home> {
                 child: ListTile(
                   title: userName.isEmpty
                       ? CustomWidget.textWidget(
-                          'User Name',
+                          'User',
                           'Encode Sans',
                           16.sp,
                           FontWeight.w600,
@@ -216,7 +217,7 @@ class _HomeState extends State<Home> {
                           FontWeight.w600,
                           0xff2B2B2B,
                         ),
-                  leading: FadeInImage.assetNetwork(
+                  leading:userImage.isEmpty?Image(image: AssetImage(userprofile)): FadeInImage.assetNetwork(
                     placeholder: userprofile,
                     image: userImage,
                   ),
@@ -307,39 +308,40 @@ class _HomeState extends State<Home> {
                       color: Color(0xffCE1A17),
                     ),
                   ),
-                  ListTile(
-                    onTap: () async {
-                      print('a');
-                      SharedPreferences preferences =
-                          await SharedPreferences.getInstance();
-                      setState(() {
-                        print('b');
-                        preferences.remove('uid');
-                        print('c');
-                        AppRoutes.replace(context, const LogInScreen());
-                      });
-                    },
-                    leading: const Icon(
-                      Icons.logout,
-                      color: Color(0xffCE1A17),
-                    ),
-                    title: CustomWidget.textWidget(
-                      'Logot',
-                      'Encode Sans',
-                      16.sp,
-                      FontWeight.w600,
-                      0xff2B2B2B,
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: Color(0xffCE1A17),
-                    ),
-                  ),
-                  // Expanded(
-                  //   child: 
+                  // ListTile(
+                  //   onTap: () async {
+                  //     print('a');
+                  //     SharedPreferences preferences =
+                  //         await SharedPreferences.getInstance();
+                  //     setState(() {
+                  //       print('b');
+                  //       Sh
+                  //       preferences.remove('uid');
+                  //       print('c');
+                  //       AppRoutes.replace(context, const LogInScreen());
+                  //     });
+                  //   },
+                  //   leading: const Icon(
+                  //     Icons.logout,
+                  //     color: Color(0xffCE1A17),
+                  //   ),
+                  //   title: CustomWidget.textWidget(
+                  //     'Logot',
+                  //     'Encode Sans',
+                  //     16.sp,
+                  //     FontWeight.w600,
+                  //     0xff2B2B2B,
+                  //   ),
+                  //   trailing: const Icon(
+                  //     Icons.arrow_forward_ios_rounded,
+                  //     color: Color(0xffCE1A17),
+                  //   ),
+                  // ),
+                  // // Expanded(
+                  //   child:
                   Container(
-                      height: MediaQuery.of(context).size.height * 0.2,
-                    ),
+                    height: MediaQuery.of(context).size.height * 0.2,
+                  ),
                   // ),
                   Padding(
                     padding: EdgeInsets.only(left: 20.w, bottom: 25.h),
@@ -379,7 +381,7 @@ class _HomeState extends State<Home> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -583,25 +585,24 @@ class _HomeState extends State<Home> {
                   print("0");
                   if (diveraddress == null) {
                     print("1");
-                    ToastUtils.showCustomToast(context,
-                        'Customer  Loaction is Missing', Colors.red);
+                    ToastUtils.showCustomToast(
+                        context, 'Customer  Loaction is Missing', Colors.red);
                   } else if (destinationaddress == null) {
                     print("2");
                     ToastUtils.showCustomToast(
                         context, 'Destination loaction is Missing', Colors.red);
                   } else {
                     print("sdfg");
-                    AppRoutes.push(
-                        context,
-                        RideStart(
-                          pickUpLat: drivercurrentlat!,
-                          pickUpLong: drivercurrentlong!,
-                          dropLat: destinationcurrentlat!,
-                          dropLong: destinationcurrentlong!,
-                          destinationString:
-                              destinationLoaction!.formattedAddress,
-                          ischeck: checkStatus,
-                        ));
+                    AppRoutes.push(context, LogInScreen());
+                    // RideStart(
+                    //   pickUpLat: drivercurrentlat!,
+                    //   pickUpLong: drivercurrentlong!,
+                    //   dropLat: destinationcurrentlat!,
+                    //   dropLong: destinationcurrentlong!,
+                    //   destinationString:
+                    //       destinationLoaction!.formattedAddress,
+                    //   ischeck: checkStatus,
+                    // ));
                   }
                 },
                 child: Container(

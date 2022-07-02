@@ -52,10 +52,10 @@ class Routes {
         return MaterialPageRoute(
           builder: (context) => const Home(),
         );
-      case enterMobileNumber:
-        return MaterialPageRoute(
-          builder: (context) => const EnterMobileNumber(),
-        );
+      // case enterMobileNumber:
+      //   return MaterialPageRoute(
+      //     builder: (context) => const EnterMobileNumber(),
+      //   );
       // case conformOTP:
       //   return MaterialPageRoute(
       //     builder: (context) => const ConformOTP(),

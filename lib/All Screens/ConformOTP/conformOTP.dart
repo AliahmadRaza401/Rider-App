@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:ride_star/All%20Screens/Home/home.dart';
+import 'package:ride_star/All%20Screens/Ride%20Start/rideStart.dart';
 import 'package:ride_star/Custom%20Widgets/customWidgets.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:ride_star/Provider/userProvider.dart';
 import 'package:ride_star/Services/app_route.dart';
 import 'package:ride_star/Services/shared_pref.dart';
 import 'package:ride_star/Utils/custom_toast.dart';
@@ -26,6 +29,13 @@ class ConformOTP extends StatefulWidget {
 class _ConformOTPState extends State<ConformOTP> {
   bool loading = false;
   TextEditingController otpConttl = TextEditingController();
+  late UserProvider userProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +124,17 @@ class _ConformOTPState extends State<ConformOTP> {
         }
         SharedPref.userLoggedIn(true);
         SharedPref.saveUserId(authCredential.user!.uid.toString());
-        AppRoutes.push(context, Home());
+        userProvider.getUserById(authCredential.user!.uid.toString());
+        AppRoutes.push(
+            context,
+            RideStart(
+              pickUpLat: drivercurrentlat!,
+              pickUpLong: drivercurrentlong!,
+              dropLat: destinationcurrentlat!,
+              dropLong: destinationcurrentlong!,
+              destinationString: destinationLoaction!.formattedAddress,
+              ischeck: checkStatus,
+            ));
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {

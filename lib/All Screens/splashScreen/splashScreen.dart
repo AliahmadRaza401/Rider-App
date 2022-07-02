@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,7 @@ import 'package:ride_star/All%20Screens/Home/home.dart';
 import 'package:ride_star/All%20Screens/Login%20Folder/logIn.dart';
 import 'package:ride_star/Provider/userProvider.dart';
 import 'package:ride_star/Services/app_route.dart';
+import 'package:ride_star/Services/shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Images/images.dart';
 
@@ -34,16 +36,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   route() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    var id = preferences.getString('uid');
+    // var id = preferences.getString('uid');
+    print('ID IS PRINTIMNG');
+    var id =await SharedPref.getUserLoggedIn();
     print('id: $id');
-    
-    if (id != null) {
-      userProvider.getUserById(id);
+    // var firebaseidis = FirebaseAuth.instance.currentUser!.uid.toString();
+    // setState(() {
+    //   print("firebaseidis = " + firebaseidis);
+    // });
+    // AppRoutes.replace(context, const Home());
+    if (id == true) {
       AppRoutes.replace(context, const Home());
     } else {
       AppRoutes.replace(context, const LogInScreen());
-      // Navigator.pushNamed(context, '/personalInformation');
-
+      Navigator.pushNamed(context, '/personalInformation');
     }
   }
 
@@ -51,9 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Image(image: AssetImage(logoimg))
-      ),
+      body: Center(child: Image(image: AssetImage(logoimg))),
     );
   }
 }

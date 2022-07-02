@@ -6,8 +6,6 @@ import 'package:ride_star/Provider/userProvider.dart';
 import 'authenticationProvider.dart';
 
 var allProvider = [
-  // ChangeNotifierProvider(create: (context) => UserProfileProvider()),
-  // ChangeNotifierProvider(create: (context) => TripProvider()),
   ChangeNotifierProvider<UserProfileProvider>(
     create: (_) => UserProfileProvider(),
     lazy: true,

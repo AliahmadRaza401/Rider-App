@@ -38,6 +38,7 @@ class _LogInScreenState extends State<LogInScreen> {
   }
 
   checkUserExist(context, phone) async {
+    //
     SharedPreferences preferences = await SharedPreferences.getInstance();
     bool userExist = false;
     print('checkUser________________________________________!');
@@ -148,10 +149,15 @@ class _LogInScreenState extends State<LogInScreen> {
               ),
               CustomWidget.heightSizedBoxWidget(30.h),
               CustomWidget.textWidget(
-                  'Login', 'Encode Sans', 22.sp, FontWeight.w400, 0xff2B2B2B),
-              CustomWidget.heightSizedBoxWidget(50.h),
-              CustomWidget.textWidget('Enter Customer Mobile Number',
-                  'Encode Sans', 18.sp, FontWeight.w800, 0xff2B2B2B),
+                'Enter Customer Mobile Number',
+                'Encode Sans',
+                22.sp,
+                FontWeight.w800,
+                0xff2B2B2B,
+              ),
+              CustomWidget.heightSizedBoxWidget(20.h),
+              CustomWidget.textWidget('we will sand a otp number',
+                  'Encode Sans', 14.sp, FontWeight.w600, 0xff2B2B2B),
               CustomWidget.heightSizedBoxWidget(60.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -229,25 +235,26 @@ class _LogInScreenState extends State<LogInScreen> {
                           setState(() {
                             loading = true;
                           });
-                          checkUserExist(context, phone.text);
+                          signIn();
+                          // checkUserExist(context, phone.text);
                         }
                       },
-                      child: customButtonDesignWidget(context, 'Login....')),
+                      child: customButtonDesignWidget(context, 'Get OTP')),
               CustomWidget.heightSizedBoxWidget(20.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomWidget.textWidget("If you don't have an account  ", '',
-                      12.sp, FontWeight.w400, 0xff888888),
-                  InkWell(
-                    onTap: () {
-                      AppRoutes.push(context, const PersonalInformation());
-                    },
-                    child: CustomWidget.textWidget(
-                        "SignUp", '', 16.sp, FontWeight.bold, 0xff2B2B2B),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     CustomWidget.textWidget("If you don't have an account  ", '',
+              //         12.sp, FontWeight.w400, 0xff888888),
+              //     InkWell(
+              //       onTap: () {
+              //         AppRoutes.push(context, const PersonalInformation());
+              //       },
+              //       child: CustomWidget.textWidget(
+              //           "SignUp", '', 16.sp, FontWeight.bold, 0xff2B2B2B),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
